@@ -1,0 +1,572 @@
+{
+  "lanes": [
+    {
+      "lane_label": "Expansion Signals",
+      "agent_label": "EOR Expansion Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Datadog",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/datadog/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=datadog",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "country manager",
+            "general manager",
+            "regional",
+            "market entry",
+            "new market",
+            "entity",
+            "entity setup",
+            "global mobility",
+            "mobility",
+            "employer of record",
+            "compliance",
+            "people operations"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "Wheely",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/wheely/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=wheely",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "country manager",
+            "general manager",
+            "regional",
+            "new market",
+            "market entry",
+            "entity",
+            "entity setup",
+            "global mobility",
+            "mobility",
+            "people operations",
+            "compliance",
+            "employer of record"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 30
+        }
+      ]
+    },
+    {
+      "lane_label": "Payroll Complexity",
+      "agent_label": "Payroll Complexity Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Elastic",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/elastic/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=elastic",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "payroll",
+            "payroll manager",
+            "payroll lead",
+            "payroll operations",
+            "global payroll",
+            "people operations",
+            "hr director",
+            "finance director",
+            "country manager",
+            "regional",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "Thunes",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/thunes/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=thunes",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "payroll",
+            "payroll operations",
+            "global payroll",
+            "people operations",
+            "human resources",
+            "finance director",
+            "country manager",
+            "regional",
+            "global mobility",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 8,
+          "trust_score": 9,
+          "active": false,
+          "max_items": 20
+        }
+      ]
+    },
+    {
+      "lane_label": "HRIS Maturity",
+      "agent_label": "HRIS Maturity Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Guidepoint",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/guidepoint/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=guidepoint",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "hris",
+            "people systems",
+            "hr systems",
+            "people operations",
+            "people ops",
+            "human resources",
+            "hr director",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 7,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 25
+        },
+        {
+          "company_name": "WillowTree",
+          "feed_url": "https://boards-api.greenhouse.io/v1/boards/willowtree/jobs?content=true",
+          "website_url": "https://boards.greenhouse.io/embed/job_board?for=willowtree",
+          "source_type": "greenhouse_json",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "hris",
+            "people systems",
+            "hr systems",
+            "people operations",
+            "people ops",
+            "human resources",
+            "hr director",
+            "country manager",
+            "regional",
+            "global mobility",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "talent pool",
+            "contractor"
+          ],
+          "source_priority": 8,
+          "trust_score": 9,
+          "active": false,
+          "max_items": 30
+        }
+      ]
+    },
+    {
+      "lane_label": "Manual Strategic Accounts",
+      "agent_label": "Manual Strategic Account Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Strategic Accounts Watchlist",
+          "source_type": "manual_signals",
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "market entry",
+            "entity",
+            "global mobility",
+            "people operations",
+            "compliance"
+          ],
+          "source_priority": 10,
+          "trust_score": 10,
+          "active": true,
+          "entries": [
+            {
+              "company_name": "Datadog",
+              "title": "Strategic watch: Datadog UAE expansion hypothesis",
+              "summary": "Strategic watch hypothesis for UAE market entry, people operations growth, and employment infrastructure support.",
+              "source_url": "https://www.datadoghq.com/",
+              "target_country_hint": "United Arab Emirates",
+              "contact_role": "Country Manager",
+              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+            },
+            {
+              "company_name": "Elastic",
+              "title": "Strategic watch: Elastic Saudi payroll complexity hypothesis",
+              "summary": "Strategic watch hypothesis for Saudi payroll operations, regional compliance, and finance-led workforce complexity.",
+              "source_url": "https://www.elastic.co/",
+              "target_country_hint": "Saudi Arabia",
+              "contact_role": "Finance Director",
+              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+            },
+            {
+              "company_name": "Guidepoint",
+              "title": "Strategic watch: Guidepoint HR systems maturity hypothesis",
+              "summary": "Strategic watch hypothesis for HRIS maturity, people systems standardization, and GCC people operations scaling.",
+              "source_url": "https://www.guidepoint.com/",
+              "target_country_hint": "United Arab Emirates",
+              "contact_role": "HR Director",
+              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+            },
+            {
+              "company_name": "Wheely",
+              "title": "Strategic watch: Wheely GCC market-entry hypothesis",
+              "summary": "Strategic watch hypothesis for GCC market entry, entity planning, mobility, and employment infrastructure support.",
+              "source_url": "https://wheely.com/",
+              "target_country_hint": "Saudi Arabia",
+              "contact_role": "General Manager",
+              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+            },
+            {
+              "company_name": "WillowTree",
+              "title": "Strategic watch: WillowTree regional HRIS opportunity hypothesis",
+              "summary": "Strategic watch hypothesis for regional HR systems, people operations maturity, and compliance-led HRIS need.",
+              "source_url": "https://www.willowtreeapps.com/",
+              "target_country_hint": "United Arab Emirates",
+              "contact_role": "People Operations Lead",
+              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane_label": "Market Intelligence",
+      "agent_label": "Market Intelligence Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Datadog",
+          "feed_url": "https://news.google.com/rss/search?q=Datadog%20(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(expansion%20OR%20launch%20OR%20entity%20OR%20mobility%20OR%20payroll)",
+          "website_url": "https://www.datadoghq.com/",
+          "source_type": "rss_news_feed",
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "expansion",
+            "launch",
+            "entity",
+            "global mobility",
+            "mobility",
+            "regional",
+            "payroll",
+            "people operations",
+            "compliance"
+          ],
+          "source_priority": 9,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 25
+        },
+        {
+          "company_name": "Elastic",
+          "feed_url": "https://news.google.com/rss/search?q=Elastic%20(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(expansion%20OR%20launch%20OR%20entity%20OR%20payroll%20OR%20HRIS)",
+          "website_url": "https://www.elastic.co/",
+          "source_type": "rss_news_feed",
+          "service_focus": "payroll",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "expansion",
+            "launch",
+            "entity",
+            "payroll",
+            "people operations",
+            "finance director",
+            "regional",
+            "compliance"
+          ],
+          "source_priority": 9,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 25
+        },
+        {
+          "company_name": "Regional Expansion Radar",
+          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(company%20expansion%20OR%20market%20entry%20OR%20regional%20headquarters%20OR%20entity)",
+          "source_type": "rss_news_feed",
+          "derive_company_name_from_title": true,
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "expansion",
+            "market entry",
+            "regional",
+            "regional headquarters",
+            "entity",
+            "office opening",
+            "launch",
+            "compliance"
+          ],
+          "source_priority": 8,
+          "trust_score": 7,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "Regional Payroll Radar",
+          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(payroll%20OR%20people%20operations%20OR%20global%20payroll%20OR%20payroll%20manager)",
+          "source_type": "rss_news_feed",
+          "derive_company_name_from_title": true,
+          "service_focus": "payroll",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "payroll",
+            "global payroll",
+            "payroll operations",
+            "payroll manager",
+            "people operations",
+            "finance director",
+            "compliance",
+            "regional"
+          ],
+          "source_priority": 8,
+          "trust_score": 7,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "MENA HRIS Radar",
+          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(HRIS%20OR%20people%20systems%20OR%20HR%20systems%20OR%20people%20operations)",
+          "source_type": "rss_news_feed",
+          "derive_company_name_from_title": true,
+          "service_focus": "hris",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "hris",
+            "people systems",
+            "hr systems",
+            "people operations",
+            "hr director",
+            "regional",
+            "compliance"
+          ],
+          "source_priority": 8,
+          "trust_score": 7,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "Market Intelligence Feed",
+          "source_type": "manual_signals",
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "watch_keywords": [
+            "expansion",
+            "launch",
+            "market entry",
+            "entity",
+            "regional",
+            "compliance"
+          ],
+          "source_priority": 9,
+          "trust_score": 8,
+          "active": true,
+          "entries": []
+        }
+      ]
+    },
+    {
+      "lane_label": "Buyer Mapping",
+      "agent_label": "Buyer Mapping Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Buyer Mapping Queue",
+          "source_type": "manual_signals",
+          "service_focus": "hris",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "watch_keywords": [
+            "head of people",
+            "hr director",
+            "people operations",
+            "payroll manager",
+            "finance director",
+            "coo",
+            "country manager"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "entries": []
+        }
+      ]
+    },
+    {
+      "lane_label": "Reactivation",
+      "agent_label": "Reactivation Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Reactivation Queue",
+          "source_type": "manual_signals",
+          "service_focus": "payroll",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt"
+          ],
+          "watch_keywords": [
+            "reactivation",
+            "follow-up",
+            "pipeline revisit",
+            "stale opportunity"
+          ],
+          "source_priority": 8,
+          "trust_score": 10,
+          "active": true,
+          "entries": []
+        }
+      ]
+    }
+  ]
+}

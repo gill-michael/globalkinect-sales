@@ -1,0 +1,318 @@
+{
+  "lanes": [
+    {
+      "lane_label": "Expansion Signals",
+      "agent_label": "EOR Expansion Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "North Star Health",
+          "feed_url": "https://northstarhealth.example/careers/rss",
+          "website_url": "https://northstarhealth.example/careers",
+          "source_type": "careers_feed",
+          "company_country": "Germany",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "country manager",
+            "general manager",
+            "market entry",
+            "new market",
+            "entity",
+            "entity setup",
+            "global mobility",
+            "mobility",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "max_items": 20
+        }
+      ]
+    },
+    {
+      "lane_label": "Payroll Complexity",
+      "agent_label": "Payroll Complexity Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Regional Freight Group",
+          "feed_url": "https://apply.workable.com/api/v3/accounts/regional-freight/jobs",
+          "website_url": "https://apply.workable.com/regional-freight/",
+          "source_type": "workable_json",
+          "company_country": "United Kingdom",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "payroll",
+            "payroll manager",
+            "payroll operations",
+            "global payroll",
+            "people operations",
+            "finance director",
+            "country manager",
+            "regional",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 20
+        }
+      ]
+    },
+    {
+      "lane_label": "HRIS Maturity",
+      "agent_label": "HRIS Maturity Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "People Systems Group",
+          "feed_url": "https://people.example/jobs.xml",
+          "website_url": "https://people.example",
+          "source_type": "careers_feed",
+          "company_country": "Canada",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "hris",
+            "people systems",
+            "hr systems",
+            "people operations",
+            "people ops",
+            "human resources",
+            "hr director",
+            "regional",
+            "compliance"
+          ],
+          "exclude_keywords": [
+            "intern",
+            "student",
+            "contractor"
+          ],
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 20
+        }
+      ]
+    },
+    {
+      "lane_label": "Partner Channel",
+      "agent_label": "Partner Channel Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Cedar Talent Partners",
+          "feed_url": "https://cedartalent.example/jobs/feed",
+          "website_url": "https://cedartalent.example",
+          "source_type": "partner_jobs_feed",
+          "company_country": "United Kingdom",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "recruitment_partner",
+          "service_focus": "partner",
+          "watch_keywords": [
+            "recruitment",
+            "staffing",
+            "placements",
+            "talent acquisition",
+            "regional",
+            "country manager"
+          ],
+          "exclude_keywords": [],
+          "source_priority": 7,
+          "trust_score": 7,
+          "active": true,
+          "max_items": 20
+        }
+      ]
+    },
+    {
+      "lane_label": "Market Intelligence",
+      "agent_label": "Market Intelligence Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Regional Expansion Radar",
+          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia)%20(company%20expansion%20OR%20market%20entry%20OR%20entity)",
+          "source_type": "rss_news_feed",
+          "derive_company_name_from_title": true,
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "watch_keywords": [
+            "expansion",
+            "market entry",
+            "entity",
+            "regional",
+            "launch",
+            "compliance"
+          ],
+          "source_priority": 8,
+          "trust_score": 7,
+          "active": true,
+          "max_items": 30
+        },
+        {
+          "company_name": "North Star Health Newsroom",
+          "feed_url": "https://northstarhealth.example/news",
+          "website_url": "https://northstarhealth.example",
+          "source_type": "webpage_html",
+          "service_focus": "eor",
+          "target_countries": [
+            "United Arab Emirates"
+          ],
+          "default_target_country": "United Arab Emirates",
+          "watch_keywords": [
+            "launch",
+            "expansion",
+            "entity",
+            "mobility"
+          ],
+          "entry_url_keywords": [
+            "news",
+            "press",
+            "launch",
+            "expansion"
+          ],
+          "fetch_detail_pages": true,
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "max_items": 15
+        }
+      ]
+    },
+    {
+      "lane_label": "Buyer Mapping",
+      "agent_label": "Buyer Mapping Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Buyer Mapping Queue",
+          "source_type": "manual_signals",
+          "service_focus": "hris",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Lebanon",
+            "Jordan"
+          ],
+          "watch_keywords": [
+            "head of people",
+            "hr director",
+            "people operations",
+            "payroll manager",
+            "finance director",
+            "coo",
+            "country manager"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "entries": []
+        }
+      ]
+    },
+    {
+      "lane_label": "Manual Strategic Accounts",
+      "agent_label": "Manual Strategic Account Agent",
+      "campaign": "Broad MENA employment infrastructure discovery",
+      "sources": [
+        {
+          "company_name": "Atlas Ops",
+          "source_type": "manual_signals",
+          "website_url": "https://atlas.example",
+          "company_country": "United Kingdom",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "market entry",
+            "entity",
+            "country manager",
+            "compliance"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "entries": [
+            {
+              "title": "Atlas Ops planning UAE expansion",
+              "summary": "Operator research indicates entity setup planning and regional launch work for the UAE.",
+              "source_url": "https://atlas.example/uae-expansion",
+              "target_country_hint": "United Arab Emirates",
+              "contact_name": "Mina Yusuf",
+              "contact_role": "COO",
+              "notes": "Manual strategic account note entered by operator."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

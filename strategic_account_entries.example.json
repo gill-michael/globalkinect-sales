@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Target Account 01 planning UAE expansion",
+    "summary": "Research suggests the company is preparing first hires and entity setup work in the UAE.",
+    "source_url": "https://example.com/target-account-01/uae-expansion",
+    "target_country_hint": "United Arab Emirates",
+    "contact_role": "COO",
+    "notes": "Good EOR-led watch candidate. Add the real company name in the enclosing manual_signals source."
+  },
+  {
+    "title": "Target Account 02 building Saudi payroll operations",
+    "summary": "Signals indicate local payroll ownership and compliance operations are growing in Saudi Arabia.",
+    "source_url": "https://example.com/target-account-02/saudi-payroll",
+    "target_country_hint": "Saudi Arabia",
+    "contact_role": "Payroll Manager",
+    "notes": "Good payroll-complexity watch candidate."
+  },
+  {
+    "title": "Target Account 03 standardizing people systems across MENA",
+    "summary": "The business appears to be maturing HR systems and people operations across multiple regional teams.",
+    "source_url": "https://example.com/target-account-03/hris",
+    "target_country_hint": "United Arab Emirates",
+    "contact_role": "People Operations Lead",
+    "notes": "Good HRIS-maturity watch candidate."
+  },
+  {
+    "title": "Target Account 04 opening first Gulf commercial team",
+    "summary": "Regional launch activity suggests a market-entry motion with likely employment infrastructure needs.",
+    "source_url": "https://example.com/target-account-04/gulf-launch",
+    "target_country_hint": "Saudi Arabia",
+    "contact_role": "General Manager",
+    "notes": "Use when the company is entering a target market without obvious local HR/payroll infrastructure."
+  },
+  {
+    "title": "Target Account 05 growing distributed UAE and Egypt workforce",
+    "summary": "Workforce growth appears split across UAE and Egypt, increasing payroll and compliance complexity.",
+    "source_url": "https://example.com/target-account-05/distributed-workforce",
+    "target_country_hint": "Egypt",
+    "contact_role": "Finance Director",
+    "notes": "Useful for payroll plus broader platform conversations."
+  },
+  {
+    "title": "Target Account 06 reviewing HR stack for regional scale",
+    "summary": "People operations maturity signals suggest the current HR tooling may not fit regional growth.",
+    "source_url": "https://example.com/target-account-06/hr-stack",
+    "target_country_hint": "United Arab Emirates",
+    "contact_role": "HR Director",
+    "notes": "Good HRIS-led entry point with possible payroll adjacency."
+  },
+  {
+    "title": "Target Account 07 testing Saudi market before local entity",
+    "summary": "The company appears to be exploring initial in-country hiring before full local infrastructure is built.",
+    "source_url": "https://example.com/target-account-07/pre-entity",
+    "target_country_hint": "Saudi Arabia",
+    "contact_role": "Head of People",
+    "notes": "Strong EOR candidate if the evidence is real."
+  },
+  {
+    "title": "Target Account 08 scaling regional operations leadership",
+    "summary": "Operational leadership buildout suggests cross-border team management and compliance needs are increasing.",
+    "source_url": "https://example.com/target-account-08/ops-scale",
+    "target_country_hint": "United Arab Emirates",
+    "contact_role": "Operations Director",
+    "notes": "Useful when there is a credible regional operating signal but buyer mapping is still incomplete."
+  },
+  {
+    "title": "Target Account 09 revisiting prior UAE opportunity",
+    "summary": "A previously interesting UAE account should be reviewed again due to renewed activity or timing.",
+    "source_url": "https://example.com/target-account-09/reactivation",
+    "target_country_hint": "United Arab Emirates",
+    "contact_role": "Country Manager",
+    "notes": "Use in the Reactivation lane rather than the strategic account lane when this came from old pipeline work."
+  },
+  {
+    "title": "Target Account 10 partner-led hiring channel into GCC",
+    "summary": "A recruiting or staffing intermediary appears able to support placement into GCC markets.",
+    "source_url": "https://example.com/target-account-10/partner-channel",
+    "target_country_hint": "Qatar",
+    "contact_role": "Managing Director",
+    "notes": "Use for partner-channel opportunities rather than direct-client outreach."
+  }
+]
