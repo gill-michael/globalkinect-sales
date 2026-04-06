@@ -149,7 +149,7 @@ def test_persist_generated_data_uses_upserts_for_unique_entities() -> None:
 
 
 def _patch_main_dependencies(monkeypatch, *, run_mode: str, events: list[str]) -> None:
-    class FakeOpenAIService:
+    class FakeAnthropicService:
         def is_configured(self) -> bool:
             return True
 
@@ -233,7 +233,7 @@ def _patch_main_dependencies(monkeypatch, *, run_mode: str, events: list[str]) -
         def is_configured(self) -> bool:
             return True
 
-    monkeypatch.setattr(main_module, "OpenAIService", FakeOpenAIService)
+    monkeypatch.setattr(main_module, "AnthropicService", FakeAnthropicService)
     monkeypatch.setattr(main_module, "SupabaseService", FakeSupabaseService)
     monkeypatch.setattr(main_module, "NotionService", FakeNotionService)
     monkeypatch.setattr(

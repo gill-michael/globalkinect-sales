@@ -14,7 +14,7 @@ The platform can be sold as:
 - `EOR + HRIS`
 - `Full Platform`
 
-The codebase is deterministic by design. It does not depend on UI, external CRM sync, or OpenAI-driven decisioning for commercial logic. The commercial source of truth is `SolutionRecommendation`, which drives downstream pipeline, messaging, execution, and deal-support behavior.
+The codebase is deterministic by design. It does not depend on UI, external CRM sync, or AI-driven decisioning for commercial logic. The commercial source of truth is `SolutionRecommendation`, which drives downstream pipeline, messaging, execution, and deal-support behavior.
 
 ## Current Workflow
 
@@ -74,9 +74,8 @@ the exact prompts are collected in [docs/NOTION_AI_PROMPTS.md](/c:/dev/globalkin
 
 Set these values in `.env` before attempting live integration:
 
-- `OPENAI_API_KEY`
-- `OPENAI_DISCOVERY_MODEL`
-- `OPENAI_LEAD_RESEARCH_MODEL`
+- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_MODEL`
 - `SALES_ENGINE_RUN_MODE`
 - `SALES_ENGINE_TRIGGERED_BY`
 - `OPERATOR_CONSOLE_HOST`
@@ -127,8 +126,8 @@ The entry point:
 - promotes qualified rows from the Notion `Lead Discovery` database into `Lead Intake` when configured
 - prefers real leads from the Notion intake database when configured
 - falls back to mock leads only when the intake database is not configured
-- uses OpenAI structured qualification for discovery rows when configured
-- uses OpenAI structured normalization for intake rows when configured
+- uses Anthropic structured qualification for discovery rows when configured
+- uses Anthropic structured normalization for intake rows when configured
 - packages send-ready outreach into the Notion `Outreach Queue` when configured
 - writes daily run status into the Notion `Sales Engine Runs` database when configured
 - persists records to Supabase when configured
@@ -153,10 +152,10 @@ Required configuration for discovery:
 - `NOTION_API_KEY`
 - `NOTION_DISCOVERY_DATABASE_ID`
 
-Recommended configuration for OpenAI-backed qualification:
+Recommended configuration for Anthropic-backed qualification:
 
-- `OPENAI_API_KEY`
-- `OPENAI_DISCOVERY_MODEL`
+- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_MODEL`
 
 Recommended configuration for automated source collection:
 
@@ -176,7 +175,7 @@ The runtime behavior is:
   `ready`
 - `review` and `reject` rows stay in `Lead Discovery` with confidence, evidence,
   fit reason, and processing fields updated
-- if OpenAI is unavailable or the qualification request fails, the application
+- if Anthropic is unavailable or the qualification request fails, the application
   falls back to deterministic evidence scoring
 
 The discovery database schema is documented in [NOTION_DISCOVERY_SCHEMA.md](/c:/dev/globalkinect-engines/sales/NOTION_DISCOVERY_SCHEMA.md).
@@ -278,10 +277,10 @@ Recommended configuration for daily operations:
 - `NOTION_OUTREACH_QUEUE_DATABASE_ID`
 - `NOTION_RUNS_DATABASE_ID`
 
-Recommended configuration for OpenAI-backed normalization:
+Recommended configuration for Anthropic-backed normalization:
 
-- `OPENAI_API_KEY`
-- `OPENAI_LEAD_RESEARCH_MODEL`
+- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_MODEL`
 
 The runtime behavior is:
 
@@ -289,9 +288,9 @@ The runtime behavior is:
   Notion
 - if matching queue or pipeline feedback already exists, scoring applies a small
   penalty and records a feedback summary for operator visibility
-- if OpenAI is configured, each row is normalized into the internal `Lead`
-  model with a structured Responses API call
-- if OpenAI is unavailable, the row is mapped directly into a `Lead`
+- if Anthropic is configured, each row is normalized into the internal `Lead`
+  model with a structured tool-use API call
+- if Anthropic is unavailable, the row is mapped directly into a `Lead`
 - if the outreach queue database is configured, each run packages send-ready
   email and LinkedIn drafts into `Outreach Queue`
 - repeat live runs preserve operator-managed queue rows already marked
@@ -534,7 +533,7 @@ The project is now in an integration-ready state.
 - Notion: service layer, field mappings, page upsert behavior, and sync orchestration are implemented
 - Source collection: feed-driven discovery candidate collection into `Lead Discovery` is implemented
 - Discovery: source-backed lead qualification and auto-promotion into `Lead Intake` are implemented
-- Real lead intake: Notion intake ingestion and OpenAI-backed lead normalization are implemented
+- Real lead intake: Notion intake ingestion and Anthropic-backed lead normalization are implemented
 - Daily packaging: Outreach Queue and Sales Engine Runs integration are implemented
 
 The remaining next-phase work is operational rather than architectural:
@@ -548,5 +547,5 @@ Out of scope in the current repository state:
 - external CRM integration
 - UI
 - async orchestration
-- OpenAI-driven commercial decisioning
+- Anthropic-driven commercial decisioning
 

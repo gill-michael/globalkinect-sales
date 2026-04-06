@@ -3,7 +3,7 @@ from typing import List
 from app.models.lead import Lead
 from app.models.lead_intake_record import LeadIntakeRecord
 from app.services.notion_service import NotionService
-from app.services.openai_service import OpenAIService
+from app.services.anthropic_service import AnthropicService
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -28,10 +28,10 @@ class LeadResearchAgent:
     def __init__(
         self,
         notion_service: NotionService | None = None,
-        openai_service: OpenAIService | None = None,
+        anthropic_service: AnthropicService | None = None,
     ) -> None:
         self.notion_service = notion_service or NotionService()
-        self.openai_service = openai_service or OpenAIService()
+        self.anthropic_service = anthropic_service or AnthropicService()
 
     def is_real_intake_configured(self) -> bool:
         return self.notion_service.is_intake_configured()
@@ -146,19 +146,19 @@ class LeadResearchAgent:
         intake_record: LeadIntakeRecord,
         campaign: str,
     ) -> Lead:
-        if self.openai_service.is_configured():
+        if self.anthropic_service.is_configured():
             try:
-                return self.openai_service.normalize_lead_from_intake(
+                return self.anthropic_service.normalize_lead_from_intake(
                     intake_record,
                     campaign=campaign,
                 )
             except Exception:
                 logger.warning(
-                    "OpenAI normalization failed for intake page %s. Falling back to direct mapping.",
+                    "Anthropic normalization failed for intake page %s. Falling back to direct mapping.",
                     intake_record.page_id,
                 )
 
-        return self.openai_service.build_lead_from_intake_fallback(
+        return self.anthropic_service.build_lead_from_intake_fallback(
             intake_record,
             campaign=campaign,
         )

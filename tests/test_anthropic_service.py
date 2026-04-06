@@ -1,46 +1,51 @@
 from app.models.lead_discovery_record import LeadDiscoveryRecord
 from app.models.lead_intake_record import LeadIntakeRecord
-from app.services.openai_service import OpenAIService
+from app.services.anthropic_service import AnthropicService
 
 
-class _FakeParsedResponse:
+class _FakeToolUseBlock:
+    def __init__(self, input_data):
+        self.type = "tool_use"
+        self.input = input_data
+
+
+class _FakeMessagesResponse:
     def __init__(self, parsed):
-        self.output_parsed = parsed
+        if parsed is None:
+            self.content = []
+        else:
+            self.content = [_FakeToolUseBlock(parsed)]
 
 
-class _FakeResponsesResource:
+class _FakeMessagesResource:
     def __init__(self, parsed):
         self._parsed = parsed
         self.last_kwargs = None
 
-    def parse(self, **kwargs):
+    def create(self, **kwargs):
         self.last_kwargs = kwargs
-        return _FakeParsedResponse(self._parsed)
+        return _FakeMessagesResponse(self._parsed)
 
 
-class _FakeOpenAIClient:
+class _FakeAnthropicClient:
     def __init__(self, parsed):
-        self.responses = _FakeResponsesResource(parsed)
+        self.messages = _FakeMessagesResource(parsed)
 
 
 def test_normalize_lead_from_intake_uses_structured_response() -> None:
-    parsed_payload = type(
-        "ParsedLead",
-        (),
-        {
-            "company_name": "Polaris Health",
-            "contact_name": "Nadia Saleh",
-            "contact_role": "People Director",
-            "email": "nadia@polarishealth.com",
-            "linkedin_url": "https://linkedin.com/in/nadia-saleh",
-            "company_country": "Germany",
-            "target_country": "KSA",
-            "lead_type": "payroll",
-            "fit_reason": "Payroll-led expansion into Saudi Arabia.",
-        },
-    )()
-    client = _FakeOpenAIClient(parsed_payload)
-    service = OpenAIService(client=client)
+    parsed_payload = {
+        "company_name": "Polaris Health",
+        "contact_name": "Nadia Saleh",
+        "contact_role": "People Director",
+        "email": "nadia@polarishealth.com",
+        "linkedin_url": "https://linkedin.com/in/nadia-saleh",
+        "company_country": "Germany",
+        "target_country": "KSA",
+        "lead_type": "payroll",
+        "fit_reason": "Payroll-led expansion into Saudi Arabia.",
+    }
+    client = _FakeAnthropicClient(parsed_payload)
+    service = AnthropicService(client=client)
     intake_record = LeadIntakeRecord(
         page_id="page-1",
         company_name="Polaris Health",
@@ -60,14 +65,17 @@ def test_normalize_lead_from_intake_uses_structured_response() -> None:
     assert lead.target_country == "Saudi Arabia"
     assert lead.lead_type == "direct_payroll"
     assert (
-        client.responses.last_kwargs["model"]
+        client.messages.last_kwargs["model"]
         == service.model
     )
-    assert client.responses.last_kwargs["reasoning"] == {"effort": "low"}
+    assert client.messages.last_kwargs["tool_choice"] == {
+        "type": "tool",
+        "name": "normalize_lead",
+    }
 
 
 def test_build_lead_from_intake_fallback_preserves_raw_values() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     intake_record = LeadIntakeRecord(
         page_id="page-2",
         company_name="Atlas Ops",
@@ -92,23 +100,19 @@ def test_build_lead_from_intake_fallback_preserves_raw_values() -> None:
 
 
 def test_normalize_lead_from_intake_treats_null_placeholders_as_missing() -> None:
-    parsed_payload = type(
-        "ParsedLead",
-        (),
-        {
-            "company_name": "Guidepoint",
-            "contact_name": "null",
-            "contact_role": "null",
-            "email": None,
-            "linkedin_url": None,
-            "company_country": None,
-            "target_country": "UAE",
-            "lead_type": "payroll",
-            "fit_reason": "Payroll-led expansion into the UAE.",
-        },
-    )()
-    client = _FakeOpenAIClient(parsed_payload)
-    service = OpenAIService(client=client)
+    parsed_payload = {
+        "company_name": "Guidepoint",
+        "contact_name": "null",
+        "contact_role": "null",
+        "email": None,
+        "linkedin_url": None,
+        "company_country": None,
+        "target_country": "UAE",
+        "lead_type": "payroll",
+        "fit_reason": "Payroll-led expansion into the UAE.",
+    }
+    client = _FakeAnthropicClient(parsed_payload)
+    service = AnthropicService(client=client)
     intake_record = LeadIntakeRecord(
         page_id="page-null",
         company_name="Guidepoint",
@@ -125,27 +129,23 @@ def test_normalize_lead_from_intake_treats_null_placeholders_as_missing() -> Non
 
 
 def test_qualify_discovery_record_uses_structured_response() -> None:
-    parsed_payload = type(
-        "ParsedDiscovery",
-        (),
-        {
-            "company_name": "North Star Health",
-            "contact_name": "Nadia Saleh",
-            "contact_role": "People Director",
-            "email": "nadia@northstarhealth.com",
-            "linkedin_url": "https://linkedin.com/in/nadia-saleh",
-            "company_country": "Germany",
-            "target_country": "KSA",
-            "lead_type": "payroll",
-            "fit_reason": "Evidence points to payroll-led Saudi expansion.",
-            "evidence_summary": "Hiring payroll operations in Saudi Arabia from Germany.",
-            "confidence_score": 9,
-            "decision": "approved",
-            "qualification_notes": "Two clear hiring signals.",
-        },
-    )()
-    client = _FakeOpenAIClient(parsed_payload)
-    service = OpenAIService(client=client)
+    parsed_payload = {
+        "company_name": "North Star Health",
+        "contact_name": "Nadia Saleh",
+        "contact_role": "People Director",
+        "email": "nadia@northstarhealth.com",
+        "linkedin_url": "https://linkedin.com/in/nadia-saleh",
+        "company_country": "Germany",
+        "target_country": "KSA",
+        "lead_type": "payroll",
+        "fit_reason": "Evidence points to payroll-led Saudi expansion.",
+        "evidence_summary": "Hiring payroll operations in Saudi Arabia from Germany.",
+        "confidence_score": 9,
+        "decision": "approved",
+        "qualification_notes": "Two clear hiring signals.",
+    }
+    client = _FakeAnthropicClient(parsed_payload)
+    service = AnthropicService(client=client)
     discovery_record = LeadDiscoveryRecord(
         page_id="page-3",
         company_name="North Star Health",
@@ -163,11 +163,11 @@ def test_qualify_discovery_record_uses_structured_response() -> None:
     assert qualification.lead.lead_type == "direct_payroll"
     assert qualification.decision == "promote"
     assert qualification.confidence_score == 9
-    assert client.responses.last_kwargs["model"] == service.discovery_model
+    assert client.messages.last_kwargs["model"] == service.discovery_model
 
 
 def test_build_discovery_qualification_fallback_scores_evidence() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     discovery_record = LeadDiscoveryRecord(
         page_id="page-4",
         company_name="Cedar Talent Partners",
@@ -195,7 +195,7 @@ def test_build_discovery_qualification_fallback_scores_evidence() -> None:
 
 
 def test_build_lead_from_intake_fallback_normalizes_secondary_markets() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     intake_record = LeadIntakeRecord(
         page_id="page-5",
         company_name="Atlas Ops",
@@ -217,7 +217,7 @@ def test_build_lead_from_intake_fallback_normalizes_secondary_markets() -> None:
 
 
 def test_build_discovery_qualification_fallback_can_promote_hris_without_target_country() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     discovery_record = LeadDiscoveryRecord(
         page_id="page-6",
         company_name="People Systems Group",
@@ -243,7 +243,7 @@ def test_build_discovery_qualification_fallback_can_promote_hris_without_target_
 
 
 def test_build_lead_from_intake_fallback_treats_null_placeholders_as_missing() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     intake_record = LeadIntakeRecord(
         page_id="page-7",
         company_name="Guidepoint",
@@ -260,7 +260,7 @@ def test_build_lead_from_intake_fallback_treats_null_placeholders_as_missing() -
 
 
 def test_discovery_qualification_input_includes_commercial_standard() -> None:
-    service = OpenAIService(client=_FakeOpenAIClient(parsed=None))
+    service = AnthropicService(client=_FakeAnthropicClient(parsed=None))
     discovery_record = LeadDiscoveryRecord(
         page_id="page-8",
         company_name="Atlas Ops",

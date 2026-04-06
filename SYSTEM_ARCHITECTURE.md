@@ -60,7 +60,7 @@ adapters.
 Current services include:
 
 - `config.py` for environment-backed settings
-- `openai_service.py` for structured qualification and normalization helpers
+- `anthropic_service.py` for structured qualification and normalization helpers
 - `notion_service.py` for intake, discovery, outreach queue, and operating-view
   sync
 - `supabase_service.py` for persistence of core commercial entities

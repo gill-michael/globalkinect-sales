@@ -39,7 +39,7 @@ class _FakeNotionService:
         return {"id": discovery_record.page_id}
 
 
-class _FakeOpenAIService:
+class _FakeAnthropicService:
     def __init__(self, qualifications=None, failing_page_ids=None, configured=True):
         self._qualifications = qualifications or {}
         self._failing_page_ids = set(failing_page_ids or [])
@@ -53,7 +53,7 @@ class _FakeOpenAIService:
     def qualify_discovery_record(self, discovery_record, campaign=None):
         self.qualify_calls.append((discovery_record, campaign))
         if discovery_record.page_id in self._failing_page_ids:
-            raise RuntimeError("OpenAI qualification failed.")
+            raise RuntimeError("Anthropic qualification failed.")
         return self._qualifications[discovery_record.page_id]
 
     def build_discovery_qualification_fallback(self, discovery_record, campaign=None):
@@ -97,7 +97,7 @@ def test_promote_discovery_records_routes_decisions_correctly() -> None:
         LeadDiscoveryRecord(page_id="page-reject", company_name="Generic Vendor"),
     ]
     fake_notion = _FakeNotionService(discovery_records=discovery_records)
-    fake_openai = _FakeOpenAIService(
+    fake_anthropic = _FakeAnthropicService(
         qualifications={
             "page-promote": _qualification("North Star Health", "promote"),
             "page-review": _qualification("Blue Dune Tech", "review"),
@@ -106,7 +106,7 @@ def test_promote_discovery_records_routes_decisions_correctly() -> None:
     )
     agent = LeadDiscoveryAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     result = agent.promote_discovery_records("Saudi payroll campaign", max_records=10)
@@ -121,7 +121,7 @@ def test_promote_discovery_records_routes_decisions_correctly() -> None:
     assert fake_notion.failed == []
 
 
-def test_promote_discovery_records_uses_fallback_when_openai_fails() -> None:
+def test_promote_discovery_records_uses_fallback_when_anthropic_fails() -> None:
     discovery_record = LeadDiscoveryRecord(
         page_id="page-fallback",
         company_name="Atlas Ops",
@@ -131,20 +131,20 @@ def test_promote_discovery_records_uses_fallback_when_openai_fails() -> None:
         evidence="Hiring a payroll lead in Riyadh.",
     )
     fake_notion = _FakeNotionService(discovery_records=[discovery_record])
-    fake_openai = _FakeOpenAIService(
+    fake_anthropic = _FakeAnthropicService(
         qualifications={},
         failing_page_ids={"page-fallback"},
     )
     agent = LeadDiscoveryAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     result = agent.promote_discovery_records("Saudi payroll campaign", max_records=10)
 
     assert result.promoted_count == 1
     assert result.failed_count == 0
-    assert len(fake_openai.fallback_calls) == 1
+    assert len(fake_anthropic.fallback_calls) == 1
     assert len(fake_notion.promoted) == 1
 
 
@@ -156,7 +156,7 @@ def test_promote_discovery_records_downgrades_duplicate_activity_to_review() -> 
         evidence="Hiring payroll operations support in Dubai.",
     )
     fake_notion = _FakeNotionService(discovery_records=[discovery_record])
-    fake_openai = _FakeOpenAIService(
+    fake_anthropic = _FakeAnthropicService(
         qualifications={
             "page-duplicate": DiscoveryQualification(
                 lead=Lead(
@@ -175,7 +175,7 @@ def test_promote_discovery_records_downgrades_duplicate_activity_to_review() -> 
     )
     agent = LeadDiscoveryAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
     feedback_index = LeadFeedbackIndex(
         by_reference={
@@ -207,7 +207,7 @@ def test_promote_discovery_records_blocks_unknown_buyer_auto_promotion() -> None
         evidence="Regional payroll operations support in the UAE.",
     )
     fake_notion = _FakeNotionService(discovery_records=[discovery_record])
-    fake_openai = _FakeOpenAIService(
+    fake_anthropic = _FakeAnthropicService(
         qualifications={
             "page-unknown-buyer": DiscoveryQualification(
                 lead=Lead(
@@ -226,7 +226,7 @@ def test_promote_discovery_records_blocks_unknown_buyer_auto_promotion() -> None
     )
     agent = LeadDiscoveryAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
     result = agent.promote_discovery_records("UAE payroll campaign", max_records=10)
 
@@ -247,7 +247,7 @@ def test_promote_discovery_records_allows_known_buyer_role_auto_promotion() -> N
         evidence="Regional payroll operations support in Saudi Arabia.",
     )
     fake_notion = _FakeNotionService(discovery_records=[discovery_record])
-    fake_openai = _FakeOpenAIService(
+    fake_anthropic = _FakeAnthropicService(
         qualifications={
             "page-known-role": DiscoveryQualification(
                 lead=Lead(
@@ -266,7 +266,7 @@ def test_promote_discovery_records_allows_known_buyer_role_auto_promotion() -> N
     )
     agent = LeadDiscoveryAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     result = agent.promote_discovery_records("Saudi payroll campaign", max_records=10)

@@ -1,4 +1,4 @@
-from app.services.openai_service import OpenAIService
+from app.services.anthropic_service import AnthropicService
 from app.services.notion_service import NotionService
 from app.services.supabase_service import SupabaseService
 from app.services.config import settings
@@ -34,7 +34,7 @@ def main() -> None:
     run_mode = _normalized_run_mode()
     triggered_by = settings.SALES_ENGINE_TRIGGERED_BY.strip() or "manual"
 
-    openai_service = OpenAIService()
+    anthropic_service = AnthropicService()
     supabase_service = SupabaseService()
     notion_service = NotionService()
     discovery_source_collector_agent = DiscoverySourceCollectorAgent(
@@ -43,7 +43,7 @@ def main() -> None:
     autonomous_lane_agent = AutonomousLaneAgent(notion_service=notion_service)
     lead_discovery_agent = LeadDiscoveryAgent(
         notion_service=notion_service,
-        openai_service=openai_service,
+        anthropic_service=anthropic_service,
     )
     crm_updater_agent = CRMUpdaterAgent()
     pipeline_intelligence_agent = PipelineIntelligenceAgent()
@@ -56,7 +56,7 @@ def main() -> None:
     )
     lead_research_agent = LeadResearchAgent(
         notion_service=notion_service,
-        openai_service=openai_service,
+        anthropic_service=anthropic_service,
     )
     lead_scoring_agent = LeadScoringAgent()
     message_writer_agent = MessageWriterAgent()
@@ -67,7 +67,7 @@ def main() -> None:
     entity_mapper_agent = EntityMapperAgent()
     notion_sync_agent = NotionSyncAgent(notion_service)
 
-    logger.info(f"OpenAI configured: {openai_service.is_configured()}")
+    logger.info(f"Anthropic configured: {anthropic_service.is_configured()}")
     logger.info(f"Sales engine run mode: {run_mode}")
     logger.info(
         f"Discovery source collection configured: {discovery_source_collector_agent.is_configured()}"

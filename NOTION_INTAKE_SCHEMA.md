@@ -64,11 +64,11 @@ when you want the engine to retry it.
 4. Review the normalized output in the intake database tracking fields and the
 operating databases already synced by the engine.
 
-## OpenAI Behavior
+## Anthropic Behavior
 
-When `OPENAI_API_KEY` is configured, the engine uses the OpenAI Responses API to
+When `ANTHROPIC_API_KEY` is configured, the engine uses the Anthropic Messages API to
 normalize the raw intake row into the internal `Lead` structure.
 
-If OpenAI is unavailable or the normalization request fails, the engine falls
+If Anthropic is unavailable or the normalization request fails, the engine falls
 back to a direct deterministic mapping from the intake row so the pipeline can
 still run.

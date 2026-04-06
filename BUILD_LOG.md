@@ -85,17 +85,17 @@ This log records what has been built in the repository and marks the current int
 
 ### 9. Real lead ingestion pass
 
-- Added `NOTION_INTAKE_DATABASE_ID` and `OPENAI_LEAD_RESEARCH_MODEL`
+- Added `NOTION_INTAKE_DATABASE_ID` and `ANTHROPIC_LEAD_RESEARCH_MODEL`
   configuration support
 - Added `LeadIntakeRecord` as the raw intake model
 - Extended `NotionService` with lead-intake read and status-update support
-- Extended `OpenAIService` with structured Responses-based lead normalization
+- Extended `AnthropicService` with structured Messages API-based lead normalization
 - Updated `LeadResearchAgent` to prefer real Notion intake rows and only fall
   back to mock leads when intake is not configured
 - Updated `main.py` to use the real intake path
 - Added mocked tests for:
   - real intake collection
-  - OpenAI normalization
+  - Anthropic normalization
   - intake tracking updates in Notion
 - Added `NOTION_INTAKE_SCHEMA.md` to document the real intake database
   contract
@@ -121,10 +121,10 @@ This log records what has been built in the repository and marks the current int
 
 ### 11. Discovery-first autonomous sourcing pass
 
-- Added `NOTION_DISCOVERY_DATABASE_ID` and `OPENAI_DISCOVERY_MODEL`
+- Added `NOTION_DISCOVERY_DATABASE_ID` and `ANTHROPIC_DISCOVERY_MODEL`
   configuration support
 - Added `LeadDiscoveryRecord` and `DiscoveryQualification` models
-- Extended `OpenAIService` with structured discovery qualification and
+- Extended `AnthropicService` with structured discovery qualification and
   deterministic fallback scoring
 - Extended `NotionService` with:
   - discovery queue fetch support
@@ -190,7 +190,7 @@ This log records what has been built in the repository and marks the current int
     matching optional properties
   - look up discovery rows by `Discovery Key` and `Source URL` before falling
     back to company title
-- Extended `OpenAIService` deterministic fallback qualification to consider:
+- Extended `AnthropicService` deterministic fallback qualification to consider:
   - source trust score
   - source priority
   - service focus

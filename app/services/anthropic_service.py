@@ -17,13 +17,13 @@ from app.utils.target_markets import (
 logger = get_logger(__name__)
 
 try:
-    from openai import OpenAI
+    from anthropic import Anthropic
 except ImportError:
-    OpenAI = None
+    Anthropic = None
 
 
-class OpenAIService:
-    DEFAULT_MODEL = "gpt-5-mini"
+class AnthropicService:
+    DEFAULT_MODEL = "claude-sonnet-4-20250514"
     PLACEHOLDER_VALUES = {
         "",
         "n/a",
@@ -40,21 +40,29 @@ class OpenAIService:
     }
 
     def __init__(self, client: Any | None = None) -> None:
-        self.api_key = settings.OPENAI_API_KEY
-        self.discovery_model = settings.OPENAI_DISCOVERY_MODEL or self.DEFAULT_MODEL
-        self.model = settings.OPENAI_LEAD_RESEARCH_MODEL or self.DEFAULT_MODEL
+        self.api_key = settings.ANTHROPIC_API_KEY
+        self.discovery_model = (
+            settings.ANTHROPIC_DISCOVERY_MODEL
+            or settings.ANTHROPIC_MODEL
+            or self.DEFAULT_MODEL
+        )
+        self.model = (
+            settings.ANTHROPIC_LEAD_RESEARCH_MODEL
+            or settings.ANTHROPIC_MODEL
+            or self.DEFAULT_MODEL
+        )
         self.client = None
 
         if client is not None:
             self.client = client
             return
 
-        if OpenAI is None:
-            logger.warning("OpenAI package is not installed. OpenAI service is unavailable.")
+        if Anthropic is None:
+            logger.warning("Anthropic package is not installed. Anthropic service is unavailable.")
             return
 
         if self.api_key:
-            self.client = OpenAI(api_key=self.api_key)
+            self.client = Anthropic(api_key=self.api_key)
 
     def is_configured(self) -> bool:
         return self.client is not None
@@ -65,18 +73,18 @@ class OpenAIService:
         campaign: str | None = None,
     ) -> Lead:
         if not self.is_configured():
-            raise RuntimeError("OpenAI service is not configured.")
+            raise RuntimeError("Anthropic service is not configured.")
 
-        response = self.client.responses.parse(
+        parsed = self._structured_request(
             model=self.model,
-            reasoning={"effort": "low"},
-            instructions=self._build_lead_research_instructions(),
-            input=self._build_lead_research_input(intake_record, campaign),
-            text_format=_LeadResearchOutput,
+            system=self._build_lead_research_instructions(),
+            user_message=self._build_lead_research_input(intake_record, campaign),
+            tool_name="normalize_lead",
+            tool_description="Return the normalized lead data as structured output.",
+            schema_model=_LeadResearchOutput,
         )
-        parsed = getattr(response, "output_parsed", None)
         if parsed is None:
-            raise RuntimeError("OpenAI did not return a structured lead payload.")
+            raise RuntimeError("Anthropic did not return a structured lead payload.")
 
         return Lead(
             company_name=self._coalesce(parsed.company_name, intake_record.company_name),
@@ -122,18 +130,18 @@ class OpenAIService:
         campaign: str | None = None,
     ) -> DiscoveryQualification:
         if not self.is_configured():
-            raise RuntimeError("OpenAI service is not configured.")
+            raise RuntimeError("Anthropic service is not configured.")
 
-        response = self.client.responses.parse(
+        parsed = self._structured_request(
             model=self.discovery_model,
-            reasoning={"effort": "low"},
-            instructions=self._build_discovery_qualification_instructions(),
-            input=self._build_discovery_qualification_input(discovery_record, campaign),
-            text_format=_DiscoveryQualificationOutput,
+            system=self._build_discovery_qualification_instructions(),
+            user_message=self._build_discovery_qualification_input(discovery_record, campaign),
+            tool_name="qualify_discovery",
+            tool_description="Return the structured discovery qualification output.",
+            schema_model=_DiscoveryQualificationOutput,
         )
-        parsed = getattr(response, "output_parsed", None)
         if parsed is None:
-            raise RuntimeError("OpenAI did not return a structured discovery payload.")
+            raise RuntimeError("Anthropic did not return a structured discovery payload.")
 
         lead = Lead(
             company_name=self._coalesce(
@@ -184,6 +192,37 @@ class OpenAIService:
             decision=decision,
             qualification_notes=self._coalesce(parsed.qualification_notes),
         )
+
+    def _structured_request(
+        self,
+        model: str,
+        system: str,
+        user_message: str,
+        tool_name: str,
+        tool_description: str,
+        schema_model: type[BaseModel],
+    ) -> BaseModel | None:
+        response = self.client.messages.create(
+            model=model,
+            max_tokens=1024,
+            system=system,
+            messages=[{"role": "user", "content": user_message}],
+            tools=[
+                {
+                    "name": tool_name,
+                    "description": tool_description,
+                    "input_schema": schema_model.model_json_schema(),
+                }
+            ],
+            tool_choice={"type": "tool", "name": tool_name},
+        )
+        tool_block = next(
+            (b for b in response.content if b.type == "tool_use"),
+            None,
+        )
+        if tool_block is None:
+            return None
+        return schema_model.model_validate(tool_block.input)
 
     def build_discovery_qualification_fallback(
         self,
@@ -334,7 +373,7 @@ class OpenAIService:
             campaign_label = campaign or intake_record.campaign or "GCC expansion campaign"
             fit_reason = (
                 f"Captured from the real intake workflow for {campaign_label} and "
-                "mapped without OpenAI enrichment."
+                "mapped without Anthropic enrichment."
             )
 
         return Lead(

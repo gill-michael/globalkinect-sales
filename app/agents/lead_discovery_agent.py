@@ -4,7 +4,7 @@ from dataclasses import field
 from app.agents.lead_feedback_agent import LeadFeedbackAgent, LeadFeedbackIndex
 from app.models.discovery_qualification import DiscoveryQualification
 from app.services.notion_service import NotionService
-from app.services.openai_service import OpenAIService
+from app.services.anthropic_service import AnthropicService
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -85,11 +85,11 @@ class LeadDiscoveryAgent:
     def __init__(
         self,
         notion_service: NotionService | None = None,
-        openai_service: OpenAIService | None = None,
+        anthropic_service: AnthropicService | None = None,
         lead_feedback_agent: LeadFeedbackAgent | None = None,
     ) -> None:
         self.notion_service = notion_service or NotionService()
-        self.openai_service = openai_service or OpenAIService()
+        self.anthropic_service = anthropic_service or AnthropicService()
         self.lead_feedback_agent = lead_feedback_agent or LeadFeedbackAgent(
             notion_service=self.notion_service,
         )
@@ -165,19 +165,19 @@ class LeadDiscoveryAgent:
         discovery_record,
         campaign: str,
     ) -> DiscoveryQualification:
-        if self.openai_service.is_configured():
+        if self.anthropic_service.is_configured():
             try:
-                return self.openai_service.qualify_discovery_record(
+                return self.anthropic_service.qualify_discovery_record(
                     discovery_record,
                     campaign=campaign,
                 )
             except Exception:
                 logger.warning(
-                    "OpenAI discovery qualification failed for page %s. Falling back to deterministic qualification.",
+                    "Anthropic discovery qualification failed for page %s. Falling back to deterministic qualification.",
                     discovery_record.page_id,
                 )
 
-        return self.openai_service.build_discovery_qualification_fallback(
+        return self.anthropic_service.build_discovery_qualification_fallback(
             discovery_record,
             campaign=campaign,
         )

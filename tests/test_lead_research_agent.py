@@ -25,7 +25,7 @@ class _FakeNotionService:
         return {"id": intake_record.page_id}
 
 
-class _FakeOpenAIService:
+class _FakeAnthropicService:
     def __init__(self, normalized_leads=None, failing_page_ids=None, configured=True):
         self._normalized_leads = normalized_leads or {}
         self._failing_page_ids = set(failing_page_ids or [])
@@ -39,7 +39,7 @@ class _FakeOpenAIService:
     def normalize_lead_from_intake(self, intake_record, campaign=None):
         self.normalize_calls.append((intake_record, campaign))
         if intake_record.page_id in self._failing_page_ids:
-            raise RuntimeError("OpenAI normalization failed.")
+            raise RuntimeError("Anthropic normalization failed.")
         return self._normalized_leads[intake_record.page_id]
 
     def build_lead_from_intake_fallback(self, intake_record, campaign=None):
@@ -60,7 +60,7 @@ class _FakeOpenAIService:
 def test_generate_mock_leads() -> None:
     agent = LeadResearchAgent(
         notion_service=_FakeNotionService(intake_configured=False),
-        openai_service=_FakeOpenAIService(configured=False),
+        anthropic_service=_FakeAnthropicService(configured=False),
     )
     leads = agent.generate_mock_leads("Test campaign")
 
@@ -73,7 +73,7 @@ def test_generate_mock_leads() -> None:
 def test_collect_leads_falls_back_to_mock_when_intake_not_configured() -> None:
     agent = LeadResearchAgent(
         notion_service=_FakeNotionService(intake_configured=False),
-        openai_service=_FakeOpenAIService(configured=False),
+        anthropic_service=_FakeAnthropicService(configured=False),
     )
 
     leads = agent.collect_leads("Test campaign")
@@ -105,21 +105,21 @@ def test_collect_leads_uses_notion_intake_and_marks_processed() -> None:
         fit_reason="Hiring a first team in Saudi Arabia with likely payroll complexity.",
     )
     fake_notion = _FakeNotionService(intake_records=[intake_record])
-    fake_openai = _FakeOpenAIService(normalized_leads={"page-1": normalized_lead})
+    fake_anthropic = _FakeAnthropicService(normalized_leads={"page-1": normalized_lead})
     agent = LeadResearchAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     leads = agent.collect_leads("Saudi expansion", max_records=5)
 
     assert leads == [normalized_lead]
-    assert fake_openai.normalize_calls[0][1] == "Saudi expansion"
+    assert fake_anthropic.normalize_calls[0][1] == "Saudi expansion"
     assert fake_notion.processed == [(intake_record, normalized_lead)]
     assert fake_notion.failed == []
 
 
-def test_collect_leads_uses_fallback_mapping_when_openai_fails() -> None:
+def test_collect_leads_uses_fallback_mapping_when_anthropic_fails() -> None:
     intake_record = LeadIntakeRecord(
         page_id="page-2",
         company_name="Atlas Ops",
@@ -130,10 +130,10 @@ def test_collect_leads_uses_fallback_mapping_when_openai_fails() -> None:
         notes="Founder-led UAE market entry.",
     )
     fake_notion = _FakeNotionService(intake_records=[intake_record])
-    fake_openai = _FakeOpenAIService(failing_page_ids={"page-2"})
+    fake_anthropic = _FakeAnthropicService(failing_page_ids={"page-2"})
     agent = LeadResearchAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     leads = agent.collect_leads("UAE expansion", max_records=5)
@@ -141,7 +141,7 @@ def test_collect_leads_uses_fallback_mapping_when_openai_fails() -> None:
     assert len(leads) == 1
     assert leads[0].company_name == "Atlas Ops"
     assert leads[0].lead_type == "direct_eor"
-    assert fake_openai.fallback_calls[0][1] == "UAE expansion"
+    assert fake_anthropic.fallback_calls[0][1] == "UAE expansion"
     assert fake_notion.processed[0][0] == intake_record
     assert fake_notion.failed == []
 
@@ -164,10 +164,10 @@ def test_collect_leads_can_skip_marking_processed_for_shadow_mode() -> None:
         fit_reason="Strong payroll-led expansion fit.",
     )
     fake_notion = _FakeNotionService(intake_records=[intake_record])
-    fake_openai = _FakeOpenAIService(normalized_leads={"page-3": normalized_lead})
+    fake_anthropic = _FakeAnthropicService(normalized_leads={"page-3": normalized_lead})
     agent = LeadResearchAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     leads = agent.collect_leads(
@@ -191,10 +191,10 @@ def test_collect_leads_skips_shadow_replay_rows_with_prior_processing_markers() 
         processed_at="2026-03-24T20:00:00Z",
     )
     fake_notion = _FakeNotionService(intake_records=[intake_record])
-    fake_openai = _FakeOpenAIService(normalized_leads={})
+    fake_anthropic = _FakeAnthropicService(normalized_leads={})
     agent = LeadResearchAgent(
         notion_service=fake_notion,
-        openai_service=fake_openai,
+        anthropic_service=fake_anthropic,
     )
 
     leads = agent.collect_leads(
@@ -204,4 +204,4 @@ def test_collect_leads_skips_shadow_replay_rows_with_prior_processing_markers() 
     )
 
     assert leads == []
-    assert fake_openai.normalize_calls == []
+    assert fake_anthropic.normalize_calls == []

@@ -5,7 +5,7 @@
 This database is the autonomous discovery queue for the sales engine.
 
 `main.py` can now read ready discovery rows from `Lead Discovery`, qualify them
-with OpenAI or deterministic fallback logic, and promote only stronger records
+with Anthropic or deterministic fallback logic, and promote only stronger records
 into `Lead Intake`.
 
 ## Required Properties
@@ -90,9 +90,9 @@ If your Notion `Status` property uses human-readable capitalization such as
    - send-ready drafts in `Outreach Queue`
    - run health in `Sales Engine Runs`
 
-## OpenAI Behavior
+## Anthropic Behavior
 
-When `OPENAI_API_KEY` is configured, the engine uses the OpenAI Responses API to
+When `ANTHROPIC_API_KEY` is configured, the engine uses the Anthropic Messages API to
 qualify discovery evidence into:
 
 - a normalized `Lead`
@@ -100,5 +100,5 @@ qualify discovery evidence into:
 - a `confidence_score`
 - a `decision`
 
-If OpenAI is unavailable or the qualification request fails, the engine falls
+If Anthropic is unavailable or the qualification request fails, the engine falls
 back to deterministic evidence scoring so the discovery layer still works.

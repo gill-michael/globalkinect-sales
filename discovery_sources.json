@@ -3,568 +3,778 @@
     {
       "lane_label": "Expansion Signals",
       "agent_label": "EOR Expansion Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
+      "campaign": "Companies expanding into GCC or multi-country markets \u2014 EOR and payroll entry",
       "sources": [
         {
-          "company_name": "Datadog",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/datadog/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=datadog",
-          "source_type": "greenhouse_json",
+          "company_name": null,
+          "feed_url": "https://www.arabianbusiness.com/rss",
+          "website_url": "https://www.arabianbusiness.com",
+          "source_type": "rss",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
-            "Egypt",
             "Qatar",
             "Kuwait",
             "Bahrain",
             "Oman",
-            "Lebanon",
-            "Jordan"
+            "Egypt"
           ],
           "lead_type_hint": "direct_eor",
           "service_focus": "eor",
           "watch_keywords": [
-            "country manager",
-            "general manager",
-            "regional",
+            "expansion",
+            "regional headquarters",
+            "RHQ",
+            "new office",
             "market entry",
-            "new market",
-            "entity",
             "entity setup",
-            "global mobility",
-            "mobility",
-            "employer of record",
-            "compliance",
-            "people operations"
-          ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "contractor"
-          ],
-          "source_priority": 9,
-          "trust_score": 9,
-          "active": true,
-          "max_items": 30
-        },
-        {
-          "company_name": "Wheely",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/wheely/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=wheely",
-          "source_type": "greenhouse_json",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt",
-            "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
-          ],
-          "lead_type_hint": "direct_eor",
-          "service_focus": "eor",
-          "watch_keywords": [
+            "workforce",
+            "hiring",
+            "regional head",
             "country manager",
-            "general manager",
-            "regional",
-            "new market",
-            "market entry",
-            "entity",
-            "entity setup",
-            "global mobility",
-            "mobility",
-            "people operations",
-            "compliance",
-            "employer of record"
-          ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "contractor"
+            "operations"
           ],
           "source_priority": 8,
           "trust_score": 8,
           "active": true,
-          "max_items": 30
+          "derive_company_name_from_title": true,
+          "default_target_country": null,
+          "fetch_detail_pages": true,
+          "entry_url_keywords": [
+            "business",
+            "company",
+            "expansion",
+            "launch",
+            "office"
+          ]
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.zawya.com/en/rss/",
+          "website_url": "https://www.zawya.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Egypt"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "expansion",
+            "launch",
+            "new market",
+            "entity",
+            "office",
+            "regional headquarters",
+            "RHQ",
+            "workforce",
+            "employees",
+            "hiring",
+            "talent",
+            "Vision 2030",
+            "operations"
+          ],
+          "source_priority": 9,
+          "trust_score": 9,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": true,
+          "entry_url_keywords": [
+            "business",
+            "company",
+            "corporate",
+            "market"
+          ]
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.thenationalnews.com/business/rss.xml",
+          "website_url": "https://www.thenationalnews.com/business",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "expansion",
+            "new office",
+            "launch",
+            "market entry",
+            "headquarters",
+            "workforce",
+            "hiring",
+            "employees"
+          ],
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://feeds.feedburner.com/entrepreneur/middle-east",
+          "website_url": "https://www.entrepreneur.com/en-ae",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "funding",
+            "Series A",
+            "Series B",
+            "expansion",
+            "launch",
+            "new market",
+            "hiring",
+            "team",
+            "workforce",
+            "scaling"
+          ],
+          "source_priority": 7,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.ukti.gov.uk/rss",
+          "website_url": "https://www.great.gov.uk/international/",
+          "source_type": "webpage_html",
+          "company_country": "United Kingdom",
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Egypt"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "Middle East",
+            "GCC",
+            "Saudi Arabia",
+            "UAE",
+            "expansion",
+            "trade mission",
+            "market entry",
+            "contract",
+            "office"
+          ],
+          "source_priority": 7,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        }
+      ]
+    },
+    {
+      "lane_label": "Saudi RHQ Signals",
+      "agent_label": "Saudi RHQ Expansion Agent",
+      "campaign": "Companies registering Saudi Regional HQ \u2014 immediate KSA payroll need",
+      "sources": [
+        {
+          "company_name": null,
+          "feed_url": "https://www.misa.gov.sa/en/news/rss",
+          "website_url": "https://www.misa.gov.sa/en/news/",
+          "source_type": "webpage_html",
+          "company_country": null,
+          "target_countries": [
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "regional headquarters",
+            "RHQ",
+            "license",
+            "international company",
+            "foreign company",
+            "entity",
+            "Riyadh",
+            "investment"
+          ],
+          "source_priority": 10,
+          "trust_score": 10,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": true,
+          "entry_url_keywords": [
+            "news",
+            "rhq",
+            "headquarters",
+            "company"
+          ]
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.arabianbusiness.com/rss",
+          "website_url": "https://www.arabianbusiness.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "regional headquarters",
+            "RHQ",
+            "Riyadh office",
+            "Saudi entity",
+            "Saudi license",
+            "Saudi expansion",
+            "Vision 2030",
+            "NEOM",
+            "giga project"
+          ],
+          "source_priority": 9,
+          "trust_score": 8,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         }
       ]
     },
     {
       "lane_label": "Payroll Complexity",
       "agent_label": "Payroll Complexity Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
+      "campaign": "Companies with multi-country GCC payroll complexity \u2014 consolidation opportunity",
       "sources": [
         {
-          "company_name": "Elastic",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/elastic/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=elastic",
-          "source_type": "greenhouse_json",
+          "company_name": null,
+          "feed_url": "https://www.constructionweekonline.com/rss.xml",
+          "website_url": "https://www.constructionweekonline.com",
+          "source_type": "rss",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
-            "Egypt",
             "Qatar",
             "Kuwait",
             "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
+            "Oman"
           ],
           "lead_type_hint": "direct_payroll",
           "service_focus": "payroll",
           "watch_keywords": [
-            "payroll",
-            "payroll manager",
-            "payroll lead",
-            "payroll operations",
-            "global payroll",
-            "people operations",
-            "hr director",
-            "finance director",
-            "country manager",
-            "regional",
-            "compliance"
+            "contract award",
+            "project win",
+            "workforce",
+            "employees",
+            "labour",
+            "manpower",
+            "hiring",
+            "mobilisation",
+            "operations"
           ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "contractor"
+          "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.meed.com/rss/",
+          "website_url": "https://www.meed.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Egypt"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "contract",
+            "award",
+            "project",
+            "workforce",
+            "employees",
+            "operations",
+            "expansion",
+            "headcount",
+            "mobilisation"
           ],
           "source_priority": 9,
           "trust_score": 9,
           "active": true,
-          "max_items": 30
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         },
         {
-          "company_name": "Thunes",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/thunes/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=thunes",
-          "source_type": "greenhouse_json",
+          "company_name": null,
+          "feed_url": "https://www.hospitalitynet.org/rss/",
+          "website_url": "https://www.hospitalitynet.org",
+          "source_type": "rss",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
-            "Egypt",
-            "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
+            "Qatar"
           ],
           "lead_type_hint": "direct_payroll",
           "service_focus": "payroll",
           "watch_keywords": [
-            "payroll",
-            "payroll operations",
-            "global payroll",
-            "people operations",
-            "human resources",
-            "finance director",
-            "country manager",
-            "regional",
-            "global mobility",
-            "compliance"
+            "opening",
+            "launch",
+            "property",
+            "hotel",
+            "resort",
+            "expansion",
+            "new market",
+            "Middle East",
+            "GCC",
+            "workforce"
           ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "contractor"
-          ],
-          "source_priority": 8,
-          "trust_score": 9,
-          "active": false,
-          "max_items": 20
+          "source_priority": 7,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         }
       ]
     },
     {
       "lane_label": "HRIS Maturity",
       "agent_label": "HRIS Maturity Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
+      "campaign": "Companies scaling people operations \u2014 HRIS consolidation and standardisation",
       "sources": [
         {
-          "company_name": "Guidepoint",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/guidepoint/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=guidepoint",
-          "source_type": "greenhouse_json",
+          "company_name": null,
+          "feed_url": "https://www.hrgrapevine.com/rss",
+          "website_url": "https://www.hrgrapevine.com",
+          "source_type": "rss",
+          "company_country": null,
           "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "Cyprus",
             "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt",
-            "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
+            "Saudi Arabia"
           ],
-          "lead_type_hint": "hris",
+          "lead_type_hint": "direct_hris",
           "service_focus": "hris",
           "watch_keywords": [
-            "hris",
-            "people systems",
-            "hr systems",
+            "HR transformation",
             "people operations",
+            "HR system",
+            "payroll system",
+            "HRIS",
+            "HR platform",
+            "workforce management",
+            "multi-country",
+            "international",
+            "scaling",
+            "headcount"
+          ],
+          "source_priority": 7,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://hrexecutive.com/feed/",
+          "website_url": "https://hrexecutive.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "payroll",
+            "HR technology",
+            "HRIS",
+            "workforce",
             "people ops",
-            "human resources",
-            "hr director",
+            "international",
+            "global HR",
+            "multi-country",
             "compliance"
           ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "contractor"
+          "source_priority": 6,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        }
+      ]
+    },
+    {
+      "lane_label": "European Multi-Country",
+      "agent_label": "European Payroll Complexity Agent",
+      "campaign": "European companies with multi-country workforce complexity \u2014 payroll and HRIS consolidation",
+      "sources": [
+        {
+          "company_name": null,
+          "feed_url": "https://www.businesstraveller.com/rss.xml",
+          "website_url": "https://www.businesstraveller.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "Cyprus"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "expansion",
+            "new office",
+            "European operations",
+            "multi-country",
+            "international workforce",
+            "hiring"
+          ],
+          "source_priority": 5,
+          "trust_score": 6,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://feeds.feedburner.com/typepad/alwi",
+          "website_url": "https://techcrunch.com/europe",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "Cyprus"
+          ],
+          "lead_type_hint": "direct_hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "Series A",
+            "Series B",
+            "funding",
+            "expansion",
+            "hiring",
+            "workforce",
+            "scaling",
+            "headcount",
+            "international",
+            "European",
+            "multi-country"
           ],
           "source_priority": 7,
           "trust_score": 8,
           "active": true,
-          "max_items": 25
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         },
         {
-          "company_name": "WillowTree",
-          "feed_url": "https://boards-api.greenhouse.io/v1/boards/willowtree/jobs?content=true",
-          "website_url": "https://boards.greenhouse.io/embed/job_board?for=willowtree",
-          "source_type": "greenhouse_json",
+          "company_name": null,
+          "feed_url": "https://www.irishtimes.com/business/rss.xml",
+          "website_url": "https://www.irishtimes.com/business",
+          "source_type": "rss",
+          "company_country": "Ireland",
+          "target_countries": [
+            "Ireland",
+            "United Kingdom",
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "expansion",
+            "new office",
+            "hiring",
+            "workforce",
+            "international",
+            "Middle East",
+            "employees",
+            "scaling"
+          ],
+          "source_priority": 7,
+          "trust_score": 8,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.di.se/rss",
+          "website_url": "https://www.di.se",
+          "source_type": "rss",
+          "company_country": "Sweden",
+          "target_countries": [
+            "Sweden",
+            "United Kingdom",
+            "United Arab Emirates"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "expansion",
+            "international",
+            "new market",
+            "hiring",
+            "workforce",
+            "employees",
+            "multi-country",
+            "scaling"
+          ],
+          "source_priority": 6,
+          "trust_score": 7,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        }
+      ]
+    },
+    {
+      "lane_label": "Funding and Growth Signals",
+      "agent_label": "Funding Signal Agent",
+      "campaign": "Recently funded companies likely to scale headcount \u2014 GCC and European ICPs",
+      "sources": [
+        {
+          "company_name": null,
+          "feed_url": "https://www.wamda.com/feed",
+          "website_url": "https://www.wamda.com",
+          "source_type": "rss",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
             "Egypt",
             "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
+            "Kuwait"
           ],
-          "lead_type_hint": "hris",
+          "lead_type_hint": "bundle",
           "service_focus": "hris",
           "watch_keywords": [
-            "hris",
-            "people systems",
-            "hr systems",
-            "people operations",
-            "people ops",
-            "human resources",
-            "hr director",
-            "country manager",
-            "regional",
-            "global mobility",
-            "compliance"
-          ],
-          "exclude_keywords": [
-            "intern",
-            "student",
-            "talent pool",
-            "contractor"
+            "funding",
+            "Series A",
+            "Series B",
+            "investment",
+            "raise",
+            "expansion",
+            "hiring",
+            "scaling",
+            "workforce",
+            "growth"
           ],
           "source_priority": 8,
+          "trust_score": 8,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://magnitt.com/feed",
+          "website_url": "https://magnitt.com",
+          "source_type": "rss",
+          "company_country": null,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar"
+          ],
+          "lead_type_hint": "bundle",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "funding",
+            "raise",
+            "Series",
+            "investment",
+            "expansion",
+            "hiring",
+            "team",
+            "workforce",
+            "scaling",
+            "growth"
+          ],
+          "source_priority": 9,
           "trust_score": 9,
-          "active": false,
-          "max_items": 30
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         }
       ]
     },
     {
       "lane_label": "Manual Strategic Accounts",
       "agent_label": "Manual Strategic Account Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
+      "campaign": "High-value named accounts \u2014 operator-curated, highest commercial priority",
       "sources": [
         {
-          "company_name": "Strategic Accounts Watchlist",
+          "company_name": "Example \u2014 UK Engineering Firm with GCC Contracts",
           "source_type": "manual_signals",
-          "service_focus": "eor",
+          "website_url": "https://example-engineering.com",
+          "company_country": "United Kingdom",
           "target_countries": [
-            "United Arab Emirates",
             "Saudi Arabia",
-            "Egypt"
+            "United Arab Emirates",
+            "Qatar"
           ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
           "watch_keywords": [
-            "market entry",
-            "entity",
-            "global mobility",
-            "people operations",
-            "compliance"
+            "contract",
+            "project",
+            "workforce",
+            "employees",
+            "Saudi"
           ],
           "source_priority": 10,
           "trust_score": 10,
-          "active": true,
+          "active": false,
           "entries": [
             {
-              "company_name": "Datadog",
-              "title": "Strategic watch: Datadog UAE expansion hypothesis",
-              "summary": "Strategic watch hypothesis for UAE market entry, people operations growth, and employment infrastructure support.",
-              "source_url": "https://www.datadoghq.com/",
-              "target_country_hint": "United Arab Emirates",
-              "contact_role": "Country Manager",
-              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
-            },
-            {
-              "company_name": "Elastic",
-              "title": "Strategic watch: Elastic Saudi payroll complexity hypothesis",
-              "summary": "Strategic watch hypothesis for Saudi payroll operations, regional compliance, and finance-led workforce complexity.",
-              "source_url": "https://www.elastic.co/",
-              "target_country_hint": "Saudi Arabia",
-              "contact_role": "Finance Director",
-              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
-            },
-            {
-              "company_name": "Guidepoint",
-              "title": "Strategic watch: Guidepoint HR systems maturity hypothesis",
-              "summary": "Strategic watch hypothesis for HRIS maturity, people systems standardization, and GCC people operations scaling.",
-              "source_url": "https://www.guidepoint.com/",
-              "target_country_hint": "United Arab Emirates",
-              "contact_role": "HR Director",
-              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
-            },
-            {
-              "company_name": "Wheely",
-              "title": "Strategic watch: Wheely GCC market-entry hypothesis",
-              "summary": "Strategic watch hypothesis for GCC market entry, entity planning, mobility, and employment infrastructure support.",
-              "source_url": "https://wheely.com/",
-              "target_country_hint": "Saudi Arabia",
-              "contact_role": "General Manager",
-              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
-            },
-            {
-              "company_name": "WillowTree",
-              "title": "Strategic watch: WillowTree regional HRIS opportunity hypothesis",
-              "summary": "Strategic watch hypothesis for regional HR systems, people operations maturity, and compliance-led HRIS need.",
-              "source_url": "https://www.willowtreeapps.com/",
-              "target_country_hint": "United Arab Emirates",
-              "contact_role": "People Operations Lead",
-              "notes": "Strategic watch hypothesis entered manually for pilot testing. Not independently verified by this system."
+              "title": "Replace this with a real named account",
+              "summary": "Add hand-curated strategic accounts here. Set active to true. One entry per company. Use evidence from LinkedIn, news, or direct knowledge. This is the highest-trust signal layer.",
+              "evidence_date": "2026-04-01",
+              "buyer_hypothesis": "HR Director or Finance Director",
+              "recommended_motion": "payroll"
             }
           ]
         }
       ]
     },
     {
-      "lane_label": "Market Intelligence",
-      "agent_label": "Market Intelligence Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
+      "lane_label": "Direct Outbound Signals",
+      "agent_label": "Direct Outbound Agent",
+      "campaign": "Direct buyer signals \u2014 HR and Finance leaders actively searching or signalling need",
       "sources": [
         {
-          "company_name": "Datadog",
-          "feed_url": "https://news.google.com/rss/search?q=Datadog%20(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(expansion%20OR%20launch%20OR%20entity%20OR%20mobility%20OR%20payroll)",
-          "website_url": "https://www.datadoghq.com/",
-          "source_type": "rss_news_feed",
-          "service_focus": "eor",
+          "company_name": null,
+          "feed_url": "https://www.linkedin.com/jobs/search/?keywords=Head+of+HR+UAE",
+          "website_url": "https://www.linkedin.com/jobs/",
+          "source_type": "webpage_html",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
-            "Egypt"
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman"
           ],
+          "lead_type_hint": "direct_hris",
+          "service_focus": "hris",
           "watch_keywords": [
-            "expansion",
-            "launch",
-            "entity",
-            "global mobility",
-            "mobility",
-            "regional",
-            "payroll",
-            "people operations",
-            "compliance"
+            "HR Director",
+            "Head of HR",
+            "Chief People Officer",
+            "Payroll Manager",
+            "Head of Payroll",
+            "Finance Director",
+            "People Operations",
+            "Global Mobility",
+            "Compensation"
           ],
           "source_priority": 9,
           "trust_score": 8,
           "active": true,
-          "max_items": 25
-        },
-        {
-          "company_name": "Elastic",
-          "feed_url": "https://news.google.com/rss/search?q=Elastic%20(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(expansion%20OR%20launch%20OR%20entity%20OR%20payroll%20OR%20HRIS)",
-          "website_url": "https://www.elastic.co/",
-          "source_type": "rss_news_feed",
-          "service_focus": "payroll",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt"
-          ],
-          "watch_keywords": [
-            "expansion",
-            "launch",
-            "entity",
-            "payroll",
-            "people operations",
-            "finance director",
-            "regional",
-            "compliance"
-          ],
-          "source_priority": 9,
-          "trust_score": 8,
-          "active": true,
-          "max_items": 25
-        },
-        {
-          "company_name": "Regional Expansion Radar",
-          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(company%20expansion%20OR%20market%20entry%20OR%20regional%20headquarters%20OR%20entity)",
-          "source_type": "rss_news_feed",
           "derive_company_name_from_title": true,
-          "service_focus": "eor",
+          "fetch_detail_pages": false
+        },
+        {
+          "company_name": null,
+          "feed_url": "https://www.bayt.com/en/international/jobs/",
+          "website_url": "https://www.bayt.com",
+          "source_type": "webpage_html",
+          "company_country": null,
           "target_countries": [
             "United Arab Emirates",
             "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
             "Egypt"
           ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
           "watch_keywords": [
-            "expansion",
-            "market entry",
-            "regional",
-            "regional headquarters",
-            "entity",
-            "office opening",
-            "launch",
-            "compliance"
+            "HR Director",
+            "Payroll",
+            "Finance Director",
+            "People Operations",
+            "HR Manager",
+            "multi-country",
+            "WPS",
+            "GOSI",
+            "EOSB",
+            "Saudization"
           ],
           "source_priority": 8,
           "trust_score": 7,
           "active": true,
-          "max_items": 30
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false
         },
         {
-          "company_name": "Regional Payroll Radar",
-          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(payroll%20OR%20people%20operations%20OR%20global%20payroll%20OR%20payroll%20manager)",
-          "source_type": "rss_news_feed",
-          "derive_company_name_from_title": true,
-          "service_focus": "payroll",
+          "company_name": null,
+          "feed_url": "https://www.reed.co.uk/jobs/rss?keywords=international+payroll+manager",
+          "website_url": "https://www.reed.co.uk",
+          "source_type": "rss",
+          "company_country": "United Kingdom",
           "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt"
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "Cyprus"
           ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
           "watch_keywords": [
-            "payroll",
+            "international payroll",
             "global payroll",
-            "payroll operations",
+            "multi-country",
+            "EMEA payroll",
             "payroll manager",
-            "people operations",
-            "finance director",
-            "compliance",
-            "regional"
+            "global mobility",
+            "international HR",
+            "global HR"
           ],
           "source_priority": 8,
           "trust_score": 7,
           "active": true,
-          "max_items": 30
-        },
-        {
-          "company_name": "MENA HRIS Radar",
-          "feed_url": "https://news.google.com/rss/search?q=(United%20Arab%20Emirates%20OR%20Saudi%20Arabia%20OR%20Egypt)%20(HRIS%20OR%20people%20systems%20OR%20HR%20systems%20OR%20people%20operations)",
-          "source_type": "rss_news_feed",
           "derive_company_name_from_title": true,
-          "service_focus": "hris",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt"
-          ],
-          "watch_keywords": [
-            "hris",
-            "people systems",
-            "hr systems",
-            "people operations",
-            "hr director",
-            "regional",
-            "compliance"
-          ],
-          "source_priority": 8,
-          "trust_score": 7,
-          "active": true,
-          "max_items": 30
-        },
-        {
-          "company_name": "Market Intelligence Feed",
-          "source_type": "manual_signals",
-          "service_focus": "eor",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt",
-            "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
-          ],
-          "watch_keywords": [
-            "expansion",
-            "launch",
-            "market entry",
-            "entity",
-            "regional",
-            "compliance"
-          ],
-          "source_priority": 9,
-          "trust_score": 8,
-          "active": true,
-          "entries": []
-        }
-      ]
-    },
-    {
-      "lane_label": "Buyer Mapping",
-      "agent_label": "Buyer Mapping Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
-      "sources": [
-        {
-          "company_name": "Buyer Mapping Queue",
-          "source_type": "manual_signals",
-          "service_focus": "hris",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt",
-            "Qatar",
-            "Kuwait",
-            "Bahrain",
-            "Oman",
-            "Lebanon",
-            "Jordan"
-          ],
-          "watch_keywords": [
-            "head of people",
-            "hr director",
-            "people operations",
-            "payroll manager",
-            "finance director",
-            "coo",
-            "country manager"
-          ],
-          "source_priority": 9,
-          "trust_score": 9,
-          "active": true,
-          "entries": []
-        }
-      ]
-    },
-    {
-      "lane_label": "Reactivation",
-      "agent_label": "Reactivation Agent",
-      "campaign": "Broad MENA employment infrastructure discovery",
-      "sources": [
-        {
-          "company_name": "Reactivation Queue",
-          "source_type": "manual_signals",
-          "service_focus": "payroll",
-          "target_countries": [
-            "United Arab Emirates",
-            "Saudi Arabia",
-            "Egypt"
-          ],
-          "watch_keywords": [
-            "reactivation",
-            "follow-up",
-            "pipeline revisit",
-            "stale opportunity"
-          ],
-          "source_priority": 8,
-          "trust_score": 10,
-          "active": true,
-          "entries": []
+          "fetch_detail_pages": false
         }
       ]
     }
