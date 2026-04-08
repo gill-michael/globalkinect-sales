@@ -19,7 +19,7 @@
 ## Environment
 
 - `SUPABASE_URL` present in `.env`
-- `SUPABASE_KEY` present in `.env`
+- `SUPABASE_PUBLISHABLE_KEY` present in `.env`
 
 ## Table Readiness
 

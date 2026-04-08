@@ -34,7 +34,7 @@ class EnvironmentValidationResult:
 
     @property
     def supabase_ready(self) -> bool:
-        return self.checks["SUPABASE_URL"] and self.checks["SUPABASE_KEY"]
+        return self.checks["SUPABASE_URL"] and self.checks["SUPABASE_PUBLISHABLE_KEY"]
 
     @property
     def notion_ready(self) -> bool:
@@ -173,7 +173,7 @@ class IntegrationCheckRunner:
         checks = {
             "DATABASE_URL": bool(settings.DATABASE_URL.strip()),
             "SUPABASE_URL": bool(settings.SUPABASE_URL.strip()),
-            "SUPABASE_KEY": bool(settings.SUPABASE_KEY.strip()),
+            "SUPABASE_PUBLISHABLE_KEY": bool(settings.SUPABASE_PUBLISHABLE_KEY.strip()),
             "NOTION_API_KEY": bool(settings.NOTION_API_KEY.strip()),
             "NOTION_LEADS_DATABASE_ID": bool(
                 settings.NOTION_LEADS_DATABASE_ID.strip()

@@ -44,7 +44,7 @@ class SupabaseService:
 
     def __init__(self) -> None:
         self.url = settings.SUPABASE_URL
-        self.key = settings.SUPABASE_KEY
+        self.key = settings.SUPABASE_PUBLISHABLE_KEY
         self.client = None
         self._configuration_error = "Supabase service is not configured."
 

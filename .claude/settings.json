@@ -5,10 +5,15 @@
       "Bash(./venv/Scripts/python -m pytest tests/test_anthropic_service.py tests/test_lead_discovery_agent.py tests/test_lead_research_agent.py tests/test_main.py -v)",
       "Bash(./venv/Scripts/pip uninstall:*)",
       "Bash(./venv/Scripts/python -m pytest tests/ -v)",
-      "Read(//c/Users/gill_/.claude/projects/c--dev-globalkinect-engines-sales/**)"
+      "Read(//c/Users/gill_/.claude/projects/c--dev-globalkinect-engines-sales/**)",
+      "Bash(grep -r \"historical\\\\|transition\\\\|older\\\\|For current rollout guidance\" c:\\\\dev\\\\globalkinect-engines\\\\sales/*.md)",
+      "Bash(mkdir -p /c/dev/globalkinect-engines/sales/docs/archive)",
+      "Bash(mv /c/dev/globalkinect-engines/sales/BUILD_LOG.md /c/dev/globalkinect-engines/sales/SALES_ENGINE_TASKLIST.md /c/dev/globalkinect-engines/sales/INTERACTION_POLISH_CHANGELOG.md /c/dev/globalkinect-engines/sales/docs/archive/)"
     ],
     "additionalDirectories": [
-      "C:\\dev\\globalkinect-engines\\sales\\app\\services"
+      "C:\\dev\\globalkinect-engines\\sales\\app\\services",
+      "C:\\dev\\globalkinect-engines\\sales",
+      "C:\\dev\\globalkinect-engines\\sales\\docs"
     ]
   }
 }

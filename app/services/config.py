@@ -18,7 +18,7 @@ class Settings:
         os.getenv("DISCOVERY_SOURCE_MAX_ITEMS_PER_SOURCE", "10")
     )
     SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+    SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "")
     DATABASE_URL = os.getenv("DATABASE_URL", "")
     NOTION_API_KEY = os.getenv("NOTION_API_KEY", "")
     NOTION_DISCOVERY_DATABASE_ID = os.getenv("NOTION_DISCOVERY_DATABASE_ID", "")

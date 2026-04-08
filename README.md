@@ -83,7 +83,7 @@ Set these values in `.env` before attempting live integration:
 - `DISCOVERY_SOURCES_FILE`
 - `DISCOVERY_SOURCE_MAX_ITEMS_PER_SOURCE`
 - `SUPABASE_URL`
-- `SUPABASE_KEY`
+- `SUPABASE_PUBLISHABLE_KEY`
 - `DATABASE_URL`
 - `NOTION_API_KEY`
 - `NOTION_DISCOVERY_DATABASE_ID`
@@ -469,7 +469,7 @@ small marker-tagged test run.
 Required environment variables for full validation:
 
 - `SUPABASE_URL`
-- `SUPABASE_KEY`
+- `SUPABASE_PUBLISHABLE_KEY`
 - `NOTION_API_KEY`
 - `NOTION_LEADS_DATABASE_ID`
 - `NOTION_PIPELINE_DATABASE_ID`

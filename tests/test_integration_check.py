@@ -140,7 +140,7 @@ class _FakeNotionSyncAgent:
 def test_validate_environment_reports_missing_values(monkeypatch) -> None:
     monkeypatch.setattr(settings, "DATABASE_URL", "")
     monkeypatch.setattr(settings, "SUPABASE_URL", "")
-    monkeypatch.setattr(settings, "SUPABASE_KEY", "")
+    monkeypatch.setattr(settings, "SUPABASE_PUBLISHABLE_KEY", "")
     monkeypatch.setattr(settings, "NOTION_API_KEY", "")
     monkeypatch.setattr(settings, "NOTION_LEADS_DATABASE_ID", "")
     monkeypatch.setattr(settings, "NOTION_PIPELINE_DATABASE_ID", "")
@@ -180,7 +180,7 @@ def test_build_test_leads_uses_integration_marker() -> None:
 def test_run_returns_success_summary_with_mocked_services(monkeypatch) -> None:
     monkeypatch.setattr(settings, "DATABASE_URL", "postgresql://example")
     monkeypatch.setattr(settings, "SUPABASE_URL", "https://supabase.example.com")
-    monkeypatch.setattr(settings, "SUPABASE_KEY", "supabase-key")
+    monkeypatch.setattr(settings, "SUPABASE_PUBLISHABLE_KEY", "supabase-key")
     monkeypatch.setattr(settings, "NOTION_API_KEY", "notion-key")
     monkeypatch.setattr(settings, "NOTION_LEADS_DATABASE_ID", "leads-db")
     monkeypatch.setattr(settings, "NOTION_PIPELINE_DATABASE_ID", "pipeline-db")
