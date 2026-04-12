@@ -95,6 +95,21 @@ This document defines the active agent estate for the GlobalKinect Sales Engine 
 - Legacy compatibility: legacy package-generation methods remain available
 - Status: built
 
+## OpportunitiesOutreachAgent
+
+- Purpose: reads prospects from the Notion Opportunities database (populated by
+  Vibe Prospecting exports), selects the matching ICP hook library from the
+  branding repo, generates personalised LinkedIn and email outreach via the
+  Anthropic API, and queues messages into the existing Outreach Queue for
+  human review. Shadow mode is always on — never sends automatically.
+- File: `app/agents/opportunities_outreach_agent.py`
+- Inputs: Notion Opportunities database, ICP hook files from
+  `branding/outreach/icp-hooks/` and `branding/outreach/partner-hooks/`
+- Outputs: Supabase `outreach_messages` rows, Notion `Outreach Queue` pages,
+  updated Notion Opportunities pages (Next Action, Next Action Date, Notes)
+- Preferred path: manual trigger via `python main.py --generate-outreach`
+- Status: built
+
 ## NotionSyncAgent
 
 - Purpose: coordinate deterministic syncing of generated entities into Notion operating views

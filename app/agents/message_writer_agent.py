@@ -14,8 +14,17 @@ class MessageWriterAgent:
         logger.warning(
             "generate_messages is a legacy path. Prefer generate_messages_with_solution."
         )
-        logger.info(f"Generating legacy messages for {len(leads)} leads.")
-        messages = [self._build_outreach_message(lead) for lead in leads]
+        filtered: List[Lead] = []
+        for lead in leads:
+            if lead.lead_type == "recruitment_partner":
+                logger.warning(
+                    "recruitment_partner channel is discontinued — this lead should "
+                    "be reclassified. Skipping outreach generation."
+                )
+                continue
+            filtered.append(lead)
+        logger.info(f"Generating legacy messages for {len(filtered)} leads.")
+        messages = [self._build_outreach_message(lead) for lead in filtered]
         logger.info("Message generation completed.")
         return messages
 
@@ -27,10 +36,23 @@ class MessageWriterAgent:
         if len(leads) != len(solution_recommendations):
             raise ValueError("Lead and solution recommendation counts must match.")
 
-        logger.info(f"Generating messages for {len(leads)} leads from solution recommendations.")
+        filtered: List[tuple[Lead, SolutionRecommendation]] = []
+        for lead, rec in zip(leads, solution_recommendations):
+            if (
+                lead.lead_type == "recruitment_partner"
+                or rec.sales_motion == "recruitment_partner"
+            ):
+                logger.warning(
+                    "recruitment_partner channel is discontinued — this lead should "
+                    "be reclassified. Skipping outreach generation."
+                )
+                continue
+            filtered.append((lead, rec))
+
+        logger.info(f"Generating messages for {len(filtered)} leads from solution recommendations.")
         messages = [
-            self._build_outreach_message_with_solution(lead, solution_recommendation)
-            for lead, solution_recommendation in zip(leads, solution_recommendations)
+            self._build_outreach_message_with_solution(lead, rec)
+            for lead, rec in filtered
         ]
         logger.info("Solution-led message generation completed.")
         return messages
@@ -122,7 +144,7 @@ class MessageWriterAgent:
     def _build_follow_up_message(self, lead: Lead) -> str:
         follow_up_by_type = {
             "direct_eor": (
-                f"Just following up in case {self._country_label(lead.target_country)} hiring is still active. "
+                f"Checking back in case {self._country_label(lead.target_country)} hiring is still active. "
                 "We can help you hire without setting up a local entity first."
             ),
             "direct_payroll": (
@@ -134,13 +156,13 @@ class MessageWriterAgent:
                 "We can support the employment and payroll side behind your hires."
             ),
             "hris": (
-                f"Just following up in case tighter HR control in {self._country_label(lead.target_country)} is still on your list. "
+                f"Checking back in case tighter HR control in {self._country_label(lead.target_country)} is still on your list. "
                 "We can support both local operations and HRIS visibility."
             ),
         }
         return follow_up_by_type.get(
             lead.lead_type or "",
-            f"Just following up in case {self._country_label(lead.target_country)} hiring support is relevant."
+            f"Checking back in case {self._country_label(lead.target_country)} hiring support is relevant."
         )
 
     def _build_linkedin_message_with_solution(
@@ -214,7 +236,7 @@ class MessageWriterAgent:
 
         follow_up_by_bundle = {
             "EOR only": (
-                f"Just following up in case EOR support for {country_label} is still relevant. "
+                f"Checking back in case EOR support for {country_label} is still relevant. "
                 "Happy to share a concise outline if useful."
             ),
             "Payroll only": (
@@ -222,7 +244,7 @@ class MessageWriterAgent:
                 "Happy to share a practical setup if useful."
             ),
             "HRIS only": (
-                f"Just following up in case stronger HR control for {country_label} is still on your list. "
+                f"Checking back in case stronger HR control for {country_label} is still on your list. "
                 "Happy to share a concise outline if useful."
             ),
             "EOR + Payroll": (
@@ -459,7 +481,7 @@ class MessageWriterAgent:
 
         if lowered.startswith("position "):
             remainder = normalized[9:]
-            if remainder.startswith("GlobalKinect"):
+            if remainder.startswith("Global Kinect"):
                 return f"The practical fit here is {remainder}."
             return f"The practical fit here is {remainder[0].lower() + remainder[1:]}."
 

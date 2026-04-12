@@ -35,6 +35,19 @@ class Settings:
     NOTION_DEAL_SUPPORT_DATABASE_ID = os.getenv("NOTION_DEAL_SUPPORT_DATABASE_ID", "")
     NOTION_ACCOUNTS_DATABASE_ID = os.getenv("NOTION_ACCOUNTS_DATABASE_ID", "")
     NOTION_BUYERS_DATABASE_ID = os.getenv("NOTION_BUYERS_DATABASE_ID", "")
+    NOTION_OPPORTUNITIES_DATABASE_ID = os.getenv(
+        "NOTION_OPPORTUNITIES_DATABASE_ID",
+        "",
+    )
+    BRANDING_REPO_PATH = os.getenv(
+        "BRANDING_REPO_PATH",
+        r"C:\dev\globalkinect\branding",
+    )
+    VIBE_PROSPECTING_API_KEY = os.getenv("VIBE_PROSPECTING_API_KEY", "")
+    VIBE_PROSPECTING_API_BASE_URL = os.getenv(
+        "VIBE_PROSPECTING_API_BASE_URL",
+        "https://api.vibe.co/v1",
+    )
 
 
 settings = Settings()

@@ -106,14 +106,14 @@ class LeadScoringAgent:
     def _recommended_angle_for_lead(self, lead: Lead) -> str:
         target_country = normalize_target_country(lead.target_country)
         angle_by_type = {
-            "direct_eor": "Position GlobalKinect around hiring into market without waiting for local entity setup.",
+            "direct_eor": "Position Global Kinect around hiring into market without waiting for local entity setup.",
             "direct_payroll": (
                 "Lead with payroll compliance, local processing confidence, and "
                 "regional execution support."
                 if target_country and market_score(target_country) < 3
                 else "Lead with payroll compliance, local processing confidence, and GCC execution support."
             ),
-            "recruitment_partner": "Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+            "recruitment_partner": "Position Global Kinect as the employment and payroll partner behind recruiter-led placements.",
             "hris": "Lead with stronger HRIS control, employee visibility, and operational consistency across markets.",
         }
 

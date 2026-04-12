@@ -3,12 +3,12 @@
     {
       "lane_label": "Expansion Signals",
       "agent_label": "EOR Expansion Agent",
-      "campaign": "Companies expanding into GCC or multi-country markets \u2014 EOR and payroll entry",
+      "campaign": "Companies expanding into GCC or multi-country markets — EOR and payroll entry",
       "sources": [
         {
-          "company_name": null,
-          "feed_url": "https://www.arabianbusiness.com/rss",
-          "website_url": "https://www.arabianbusiness.com",
+          "company_name": "Tahawul Tech",
+          "feed_url": "https://www.tahawultech.com/feed/",
+          "website_url": "https://www.tahawultech.com",
           "source_type": "rss",
           "company_country": null,
           "target_countries": [
@@ -50,9 +50,9 @@
           ]
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.zawya.com/en/rss/",
-          "website_url": "https://www.zawya.com",
+          "company_name": "Saudi Gazette Business",
+          "feed_url": "https://saudigazette.com.sa/rss/business",
+          "website_url": "https://saudigazette.com.sa",
           "source_type": "rss",
           "company_country": null,
           "target_countries": [
@@ -94,8 +94,8 @@
           ]
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.thenationalnews.com/business/rss.xml",
+          "company_name": "The National",
+          "feed_url": "https://www.thenationalnews.com/arc/outboundfeeds/rss/category/business/?outputType=xml",
           "website_url": "https://www.thenationalnews.com/business",
           "source_type": "rss",
           "company_country": null,
@@ -122,8 +122,8 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://feeds.feedburner.com/entrepreneur/middle-east",
+          "company_name": "Entrepreneur",
+          "feed_url": "https://www.entrepreneur.com/latest.rss",
           "website_url": "https://www.entrepreneur.com/en-ae",
           "source_type": "rss",
           "company_country": null,
@@ -153,10 +153,10 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.ukti.gov.uk/rss",
-          "website_url": "https://www.great.gov.uk/international/",
-          "source_type": "webpage_html",
+          "company_name": "UK Department for Business and Trade",
+          "feed_url": "https://www.gov.uk/government/organisations/department-for-business-and-trade.atom",
+          "website_url": "https://www.gov.uk/government/organisations/department-for-business-and-trade",
+          "source_type": "rss",
           "company_country": "United Kingdom",
           "target_countries": [
             "United Arab Emirates",
@@ -185,19 +185,89 @@
           "active": true,
           "derive_company_name_from_title": true,
           "fetch_detail_pages": false
+        },
+        {
+          "company_name": "Gulf News",
+          "feed_url": "https://gulfnews.com/feed",
+          "website_url": "https://gulfnews.com",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Egypt"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "expansion",
+            "launch",
+            "new office",
+            "market entry",
+            "regional headquarters",
+            "RHQ",
+            "hiring",
+            "workforce",
+            "employees",
+            "country manager",
+            "operations"
+          ],
+          "source_priority": 8,
+          "trust_score": 8
+        },
+        {
+          "company_name": "The Arabian Post",
+          "feed_url": "https://www.thearabianpost.com/feed/",
+          "website_url": "https://www.thearabianpost.com",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman",
+            "Egypt"
+          ],
+          "lead_type_hint": "direct_eor",
+          "service_focus": "eor",
+          "watch_keywords": [
+            "expansion",
+            "new office",
+            "regional headquarters",
+            "RHQ",
+            "market entry",
+            "entity",
+            "workforce",
+            "hiring",
+            "employees"
+          ],
+          "source_priority": 7,
+          "trust_score": 7
         }
       ]
     },
     {
       "lane_label": "Saudi RHQ Signals",
       "agent_label": "Saudi RHQ Expansion Agent",
-      "campaign": "Companies registering Saudi Regional HQ \u2014 immediate KSA payroll need",
+      "campaign": "Companies registering Saudi Regional HQ — immediate KSA payroll need",
       "sources": [
         {
-          "company_name": null,
-          "feed_url": "https://www.misa.gov.sa/en/news/rss",
+          "company_name": "Saudi Ministry of Investment",
+          "feed_url": "https://www.misa.gov.sa/rss",
           "website_url": "https://www.misa.gov.sa/en/news/",
-          "source_type": "webpage_html",
+          "source_type": "rss",
           "company_country": null,
           "target_countries": [
             "Saudi Arabia"
@@ -218,18 +288,12 @@
           "trust_score": 10,
           "active": true,
           "derive_company_name_from_title": true,
-          "fetch_detail_pages": true,
-          "entry_url_keywords": [
-            "news",
-            "rhq",
-            "headquarters",
-            "company"
-          ]
+          "fetch_detail_pages": true
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.arabianbusiness.com/rss",
-          "website_url": "https://www.arabianbusiness.com",
+          "company_name": "Saudi Gazette Business",
+          "feed_url": "https://saudigazette.com.sa/rss/business",
+          "website_url": "https://saudigazette.com.sa",
           "source_type": "rss",
           "company_country": null,
           "target_countries": [
@@ -259,11 +323,11 @@
     {
       "lane_label": "Payroll Complexity",
       "agent_label": "Payroll Complexity Agent",
-      "campaign": "Companies with multi-country GCC payroll complexity \u2014 consolidation opportunity",
+      "campaign": "Companies with multi-country GCC payroll complexity — consolidation opportunity",
       "sources": [
         {
-          "company_name": null,
-          "feed_url": "https://www.constructionweekonline.com/rss.xml",
+          "company_name": "Construction Week Online",
+          "feed_url": "https://www.constructionweekonline.com/feed",
           "website_url": "https://www.constructionweekonline.com",
           "source_type": "rss",
           "company_country": null,
@@ -295,7 +359,7 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
+          "company_name": "MEED",
           "feed_url": "https://www.meed.com/rss/",
           "website_url": "https://www.meed.com",
           "source_type": "rss",
@@ -329,8 +393,8 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.hospitalitynet.org/rss/",
+          "company_name": "Hospitality Net",
+          "feed_url": "https://www.hospitalitynet.org/rss/news.xml",
           "website_url": "https://www.hospitalitynet.org",
           "source_type": "rss",
           "company_country": null,
@@ -358,16 +422,114 @@
           "active": true,
           "derive_company_name_from_title": true,
           "fetch_detail_pages": false
+        },
+        {
+          "company_name": "Construction Management",
+          "feed_url": "https://www.constructionmanagement.co.uk/feed/",
+          "website_url": "https://www.constructionmanagement.co.uk",
+          "source_type": "rss",
+          "company_country": "United Kingdom",
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Kingdom",
+            "Saudi Arabia",
+            "United Arab Emirates",
+            "Qatar"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "contract award",
+            "project win",
+            "workforce",
+            "manpower",
+            "mobilisation",
+            "international",
+            "Saudi",
+            "UAE",
+            "Gulf",
+            "overseas"
+          ],
+          "source_priority": 6,
+          "trust_score": 7
+        },
+        {
+          "company_name": "Hotelier Middle East",
+          "feed_url": "https://www.hoteliermiddleeast.com/feed",
+          "website_url": "https://www.hoteliermiddleeast.com",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Bahrain",
+            "Oman"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "opening",
+            "launch",
+            "property",
+            "hotel",
+            "resort",
+            "expansion",
+            "new market",
+            "workforce",
+            "hiring",
+            "employees"
+          ],
+          "source_priority": 7,
+          "trust_score": 8
+        },
+        {
+          "company_name": "Logistics Middle East",
+          "feed_url": "https://www.logisticsmiddleeast.com/feed",
+          "website_url": "https://www.logisticsmiddleeast.com",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman"
+          ],
+          "lead_type_hint": "direct_payroll",
+          "service_focus": "payroll",
+          "watch_keywords": [
+            "contract",
+            "award",
+            "project",
+            "workforce",
+            "mobilisation",
+            "operations",
+            "expansion",
+            "hiring",
+            "employees"
+          ],
+          "source_priority": 6,
+          "trust_score": 7
         }
       ]
     },
     {
       "lane_label": "HRIS Maturity",
       "agent_label": "HRIS Maturity Agent",
-      "campaign": "Companies scaling people operations \u2014 HRIS consolidation and standardisation",
+      "campaign": "Companies scaling people operations — HRIS consolidation and standardisation",
       "sources": [
         {
-          "company_name": null,
+          "company_name": "HR Grapevine",
           "feed_url": "https://www.hrgrapevine.com/rss",
           "website_url": "https://www.hrgrapevine.com",
           "source_type": "rss",
@@ -402,7 +564,7 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
+          "company_name": "Human Resource Executive",
           "feed_url": "https://hrexecutive.com/feed/",
           "website_url": "https://hrexecutive.com",
           "source_type": "rss",
@@ -432,17 +594,117 @@
           "active": true,
           "derive_company_name_from_title": true,
           "fetch_detail_pages": false
+        },
+        {
+          "company_name": "Personnel Today",
+          "feed_url": "https://www.personneltoday.com/feed/",
+          "website_url": "https://www.personneltoday.com",
+          "source_type": "rss",
+          "company_country": "United Kingdom",
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "Cyprus"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "HR transformation",
+            "people operations",
+            "HRIS",
+            "HR technology",
+            "payroll system",
+            "workforce management",
+            "multi-country",
+            "international",
+            "global HR",
+            "scaling",
+            "headcount"
+          ],
+          "source_priority": 7,
+          "trust_score": 7
+        },
+        {
+          "company_name": "HRD Asia",
+          "feed_url": "https://www.hcamag.com/asia/rss",
+          "website_url": "https://www.hcamag.com/asia",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Qatar",
+            "Kuwait",
+            "Bahrain",
+            "Oman"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "HR technology",
+            "HRIS",
+            "payroll",
+            "workforce",
+            "people operations",
+            "multi-country",
+            "Middle East",
+            "GCC",
+            "Saudi",
+            "UAE",
+            "global HR"
+          ],
+          "source_priority": 6,
+          "trust_score": 7
+        },
+        {
+          "company_name": "HR Technology News",
+          "feed_url": "https://www.hrtechnologynews.com/feed",
+          "website_url": "https://www.hrtechnologynews.com",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Kingdom",
+            "Ireland",
+            "Sweden",
+            "United Arab Emirates",
+            "Saudi Arabia"
+          ],
+          "lead_type_hint": "hris",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "HRIS",
+            "HR technology",
+            "payroll system",
+            "workforce",
+            "people ops",
+            "international",
+            "global HR",
+            "multi-country",
+            "compliance"
+          ],
+          "source_priority": 5,
+          "trust_score": 6
         }
       ]
     },
     {
       "lane_label": "European Multi-Country",
       "agent_label": "European Payroll Complexity Agent",
-      "campaign": "European companies with multi-country workforce complexity \u2014 payroll and HRIS consolidation",
+      "campaign": "European companies with multi-country workforce complexity — payroll and HRIS consolidation",
       "sources": [
         {
-          "company_name": null,
-          "feed_url": "https://www.businesstraveller.com/rss.xml",
+          "company_name": "Business Traveller",
+          "feed_url": "https://www.businesstraveller.com/feed/",
           "website_url": "https://www.businesstraveller.com",
           "source_type": "rss",
           "company_country": null,
@@ -469,9 +731,9 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://feeds.feedburner.com/typepad/alwi",
-          "website_url": "https://techcrunch.com/europe",
+          "company_name": "TechCrunch",
+          "feed_url": "https://techcrunch.com/feed/",
+          "website_url": "https://techcrunch.com",
           "source_type": "rss",
           "company_country": null,
           "target_countries": [
@@ -502,8 +764,8 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.irishtimes.com/business/rss.xml",
+          "company_name": "The Irish Times",
+          "feed_url": "https://www.irishtimes.com/arc/outboundfeeds/rss/category/business/?outputType=xml",
           "website_url": "https://www.irishtimes.com/business",
           "source_type": "rss",
           "company_country": "Ireland",
@@ -532,7 +794,7 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
+          "company_name": "Dagens Industri",
           "feed_url": "https://www.di.se/rss",
           "website_url": "https://www.di.se",
           "source_type": "rss",
@@ -565,10 +827,10 @@
     {
       "lane_label": "Funding and Growth Signals",
       "agent_label": "Funding Signal Agent",
-      "campaign": "Recently funded companies likely to scale headcount \u2014 GCC and European ICPs",
+      "campaign": "Recently funded companies likely to scale headcount — GCC and European ICPs",
       "sources": [
         {
-          "company_name": null,
+          "company_name": "Wamda",
           "feed_url": "https://www.wamda.com/feed",
           "website_url": "https://www.wamda.com",
           "source_type": "rss",
@@ -601,9 +863,9 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://magnitt.com/feed",
-          "website_url": "https://magnitt.com",
+          "company_name": "Menabytes",
+          "feed_url": "https://www.menabytes.com/feed/",
+          "website_url": "https://www.menabytes.com",
           "source_type": "rss",
           "company_country": null,
           "target_countries": [
@@ -631,16 +893,52 @@
           "active": true,
           "derive_company_name_from_title": true,
           "fetch_detail_pages": false
+        },
+        {
+          "company_name": "ArabNet",
+          "feed_url": "https://www.arabnet.me/feed",
+          "website_url": "https://www.arabnet.me",
+          "source_type": "rss",
+          "company_country": null,
+          "active": true,
+          "derive_company_name_from_title": true,
+          "fetch_detail_pages": false,
+          "target_countries": [
+            "United Arab Emirates",
+            "Saudi Arabia",
+            "Egypt",
+            "Qatar",
+            "Kuwait",
+            "Lebanon",
+            "Jordan"
+          ],
+          "lead_type_hint": "bundle",
+          "service_focus": "hris",
+          "watch_keywords": [
+            "funding",
+            "Series A",
+            "Series B",
+            "investment",
+            "raise",
+            "expansion",
+            "hiring",
+            "scaling",
+            "workforce",
+            "growth",
+            "MENA"
+          ],
+          "source_priority": 7,
+          "trust_score": 7
         }
       ]
     },
     {
       "lane_label": "Manual Strategic Accounts",
       "agent_label": "Manual Strategic Account Agent",
-      "campaign": "High-value named accounts \u2014 operator-curated, highest commercial priority",
+      "campaign": "High-value named accounts — operator-curated, highest commercial priority",
       "sources": [
         {
-          "company_name": "Example \u2014 UK Engineering Firm with GCC Contracts",
+          "company_name": "Example — UK Engineering Firm with GCC Contracts",
           "source_type": "manual_signals",
           "website_url": "https://example-engineering.com",
           "company_country": "United Kingdom",
@@ -676,10 +974,10 @@
     {
       "lane_label": "Direct Outbound Signals",
       "agent_label": "Direct Outbound Agent",
-      "campaign": "Direct buyer signals \u2014 HR and Finance leaders actively searching or signalling need",
+      "campaign": "Direct buyer signals — HR and Finance leaders actively searching or signalling need",
       "sources": [
         {
-          "company_name": null,
+          "company_name": "LinkedIn Jobs",
           "feed_url": "https://www.linkedin.com/jobs/search/?keywords=Head+of+HR+UAE",
           "website_url": "https://www.linkedin.com/jobs/",
           "source_type": "webpage_html",
@@ -712,9 +1010,9 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
-          "feed_url": "https://www.bayt.com/en/international/jobs/",
-          "website_url": "https://www.bayt.com",
+          "company_name": "GulfTalent",
+          "feed_url": "https://www.gulftalent.com/jobs/search?searchTerm=HR+Director",
+          "website_url": "https://www.gulftalent.com",
           "source_type": "webpage_html",
           "company_country": null,
           "target_countries": [
@@ -747,7 +1045,7 @@
           "fetch_detail_pages": false
         },
         {
-          "company_name": null,
+          "company_name": "Reed",
           "feed_url": "https://www.reed.co.uk/jobs/rss?keywords=international+payroll+manager",
           "website_url": "https://www.reed.co.uk",
           "source_type": "rss",
@@ -772,7 +1070,7 @@
           ],
           "source_priority": 8,
           "trust_score": 7,
-          "active": true,
+          "active": false,
           "derive_company_name_from_title": true,
           "fetch_detail_pages": false
         }

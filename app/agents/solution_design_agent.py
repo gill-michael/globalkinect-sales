@@ -67,15 +67,25 @@ class SolutionDesignAgent:
 
         logger.info(f"Creating {len(leads)} solution recommendations.")
         if pipeline_records is None:
-            recommendations = [
-                self.create_solution_recommendation(lead)
-                for lead in leads
-            ]
+            recommendations: List[SolutionRecommendation] = []
+            for lead in leads:
+                if lead.lead_type == "recruitment_partner":
+                    logger.warning(
+                        "recruitment_partner channel is discontinued — this lead should "
+                        "be reclassified. Skipping outreach generation."
+                    )
+                    continue
+                recommendations.append(self.create_solution_recommendation(lead))
         else:
-            recommendations = [
-                self.create_solution_recommendation(lead, record)
-                for lead, record in zip(leads, pipeline_records)
-            ]
+            recommendations = []
+            for lead, record in zip(leads, pipeline_records):
+                if lead.lead_type == "recruitment_partner":
+                    logger.warning(
+                        "recruitment_partner channel is discontinued — this lead should "
+                        "be reclassified. Skipping outreach generation."
+                    )
+                    continue
+                recommendations.append(self.create_solution_recommendation(lead, record))
         logger.info("Solution recommendation creation completed.")
         return recommendations
 
@@ -161,7 +171,7 @@ class SolutionDesignAgent:
 
         if bundle_label == "Full Platform":
             return (
-                f"Position GlobalKinect as a single operating platform for hiring, "
+                f"Position Global Kinect as a single operating platform for hiring, "
                 f"payroll, and HR control in {self._country_label(lead.target_country)}."
             )
 

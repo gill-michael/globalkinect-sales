@@ -7,6 +7,7 @@ from app.utils.time import utc_now_iso
 ExecutionTaskType = Literal[
     "draft_message",
     "send_message",
+    "send_reply",
     "wait_for_reply",
     "nudge_message",
     "book_call",

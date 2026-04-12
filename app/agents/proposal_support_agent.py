@@ -52,10 +52,20 @@ class ProposalSupportAgent:
         if len(leads) != len(pipeline_records):
             raise ValueError("Lead and pipeline record counts must match.")
 
-        logger.info(f"Creating {len(leads)} deal support packages.")
+        filtered: List[tuple[Lead, PipelineRecord]] = []
+        for lead, record in zip(leads, pipeline_records):
+            if lead.lead_type == "recruitment_partner":
+                logger.warning(
+                    "recruitment_partner channel is discontinued — this lead should "
+                    "be reclassified. Skipping outreach generation."
+                )
+                continue
+            filtered.append((lead, record))
+
+        logger.info(f"Creating {len(filtered)} deal support packages.")
         packages = [
             self.create_deal_support_package(lead, record)
-            for lead, record in zip(leads, pipeline_records)
+            for lead, record in filtered
         ]
         logger.info("Deal support package creation completed.")
         return packages
@@ -122,18 +132,29 @@ class ProposalSupportAgent:
                 "Lead, pipeline record, and solution recommendation counts must match."
             )
 
-        logger.info(f"Creating {len(leads)} solution-led deal support packages.")
+        filtered: List[tuple[Lead, PipelineRecord, SolutionRecommendation]] = []
+        for lead, pipeline_record, solution_recommendation in zip(
+            leads, pipeline_records, solution_recommendations
+        ):
+            if (
+                lead.lead_type == "recruitment_partner"
+                or solution_recommendation.sales_motion == "recruitment_partner"
+            ):
+                logger.warning(
+                    "recruitment_partner channel is discontinued — this lead should "
+                    "be reclassified. Skipping outreach generation."
+                )
+                continue
+            filtered.append((lead, pipeline_record, solution_recommendation))
+
+        logger.info(f"Creating {len(filtered)} solution-led deal support packages.")
         packages = [
             self.create_deal_support_package_with_solution(
                 lead,
                 pipeline_record,
                 solution_recommendation,
             )
-            for lead, pipeline_record, solution_recommendation in zip(
-                leads,
-                pipeline_records,
-                solution_recommendations,
-            )
+            for lead, pipeline_record, solution_recommendation in filtered
         ]
         logger.info("Solution-led deal support package creation completed.")
         return packages
@@ -227,20 +248,20 @@ class ProposalSupportAgent:
     ) -> str:
         return {
             "direct_eor": (
-                f"Proposed model: GlobalKinect acts as employer of record in {self._country_label(lead.target_country)} so the client can hire faster, stay compliant, and avoid the upfront burden of setting up an entity first."
+                f"Proposed model: Global Kinect acts as employer of record in {self._country_label(lead.target_country)} so the client can hire faster, stay compliant, and avoid the upfront burden of setting up an entity first."
             ),
             "direct_payroll": (
-                f"Proposed model: GlobalKinect manages compliant payroll processing and local payroll operations for employees in {self._country_label(lead.target_country)} with simpler execution and less operational burden."
+                f"Proposed model: Global Kinect manages compliant payroll processing and local payroll operations for employees in {self._country_label(lead.target_country)} with simpler execution and less operational burden."
             ),
             "recruitment_partner": (
-                f"Proposed model: GlobalKinect supports recruiter-led placements in {self._country_label(lead.target_country)} by taking responsibility for compliant employment and payroll execution, helping the partner place talent faster without local employer complexity."
+                f"Proposed model: Global Kinect supports recruiter-led placements in {self._country_label(lead.target_country)} by taking responsibility for compliant employment and payroll execution, helping the partner place talent faster without local employer complexity."
             ),
             "hris": (
-                f"Proposed model: GlobalKinect supports HRIS-linked operating control, employee administration, and local people operations in {self._country_label(lead.target_country)} with better visibility and practical compliance support."
+                f"Proposed model: Global Kinect supports HRIS-linked operating control, employee administration, and local people operations in {self._country_label(lead.target_country)} with better visibility and practical compliance support."
             ),
         }.get(
             lead.lead_type or "",
-            f"Proposed model: GlobalKinect provides practical employment, payroll, and operational support in {self._country_label(lead.target_country)} with simpler execution and practical compliance support."
+            f"Proposed model: Global Kinect provides practical employment, payroll, and operational support in {self._country_label(lead.target_country)} with simpler execution and practical compliance support."
         )
 
     def _build_call_prep_summary_with_solution(
@@ -354,25 +375,25 @@ class ProposalSupportAgent:
 
         summary_by_bundle = {
             "EOR only": (
-                f"Proposed model: GlobalKinect provides EOR support in {country_label} so the client can hire compliantly with simpler local execution."
+                f"Proposed model: Global Kinect provides EOR support in {country_label} so the client can hire compliantly with simpler local execution."
             ),
             "Payroll only": (
-                f"Proposed model: GlobalKinect provides payroll-only support in {country_label} so the team can run compliant payroll with less operational burden."
+                f"Proposed model: Global Kinect provides payroll-only support in {country_label} so the team can run compliant payroll with less operational burden."
             ),
             "HRIS only": (
-                f"Proposed model: GlobalKinect provides HRIS-led support in {country_label} so the team gains better HR visibility and operating control."
+                f"Proposed model: Global Kinect provides HRIS-led support in {country_label} so the team gains better HR visibility and operating control."
             ),
             "EOR + Payroll": (
-                f"Proposed model: GlobalKinect provides an EOR + Payroll setup in {country_label} covering {modules_label}, so the client can hire faster and keep payroll execution aligned from day one."
+                f"Proposed model: Global Kinect provides an EOR + Payroll setup in {country_label} covering {modules_label}, so the client can hire faster and keep payroll execution aligned from day one."
             ),
             "Payroll + HRIS": (
-                f"Proposed model: GlobalKinect provides a Payroll + HRIS setup in {country_label} covering {modules_label}, so the client gets compliant payroll plus stronger operational control."
+                f"Proposed model: Global Kinect provides a Payroll + HRIS setup in {country_label} covering {modules_label}, so the client gets compliant payroll plus stronger operational control."
             ),
             "EOR + HRIS": (
-                f"Proposed model: GlobalKinect provides an EOR + HRIS setup in {country_label} covering {modules_label}, so the client can enter the market with compliant hiring and clearer HR structure."
+                f"Proposed model: Global Kinect provides an EOR + HRIS setup in {country_label} covering {modules_label}, so the client can enter the market with compliant hiring and clearer HR structure."
             ),
             "Full Platform": (
-                f"Proposed model: GlobalKinect provides a Full Platform setup in {country_label} covering {modules_label}, so the client can manage hiring, payroll, and HR operations through one operating model."
+                f"Proposed model: Global Kinect provides a Full Platform setup in {country_label} covering {modules_label}, so the client can manage hiring, payroll, and HR operations through one operating model."
             ),
         }
         return summary_by_bundle[solution_recommendation.bundle_label]
@@ -460,7 +481,7 @@ class ProposalSupportAgent:
 
         if lowered.startswith("position "):
             remainder = normalized[9:]
-            if remainder.startswith("GlobalKinect"):
+            if remainder.startswith("Global Kinect"):
                 return f"The practical fit here is {remainder}."
             return f"The practical fit here is {remainder[0].lower() + remainder[1:]}."
 

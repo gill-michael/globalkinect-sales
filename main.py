@@ -1,8 +1,13 @@
+import argparse
+import sys
+
 from app.services.anthropic_service import AnthropicService
 from app.services.notion_service import NotionService
 from app.services.supabase_service import SupabaseService
 from app.services.config import settings
 from app.agents.discovery_source_collector_agent import DiscoverySourceCollectorAgent
+from app.agents.opportunities_outreach_agent import OpportunitiesOutreachAgent
+from app.agents.response_handler_agent import ResponseHandlerAgent
 from app.agents.autonomous_lane_agent import AutonomousLaneAgent
 from app.agents.lead_discovery_agent import LeadDiscoveryAgent
 from app.agents.lead_feedback_agent import LeadFeedbackAgent
@@ -27,7 +32,7 @@ logger = get_logger(__name__)
 
 
 def main() -> None:
-    logger.info("Starting GlobalKinect sales engine...")
+    logger.info("Starting Global Kinect sales engine...")
     started_at = utc_now_iso()
     run_marker = _build_run_marker()
     campaign = "UK/EU companies hiring across the Gulf, Egypt, Lebanon, and Jordan"
@@ -66,6 +71,12 @@ def main() -> None:
     execution_agent = ExecutionAgent()
     entity_mapper_agent = EntityMapperAgent()
     notion_sync_agent = NotionSyncAgent(notion_service)
+    response_handler_agent = ResponseHandlerAgent(
+        notion_service=notion_service,
+        anthropic_service=anthropic_service,
+        supabase_service=supabase_service,
+        crm_updater_agent=crm_updater_agent,
+    )
 
     logger.info(f"Anthropic configured: {anthropic_service.is_configured()}")
     logger.info(f"Sales engine run mode: {run_mode}")
@@ -121,6 +132,14 @@ def main() -> None:
             )
 
         feedback_index = lead_feedback_agent.collect_feedback_index(limit=300)
+
+        if response_handler_agent.is_configured():
+            response_result = response_handler_agent.process_replies(
+                limit=50,
+                shadow_mode=run_mode != "live",
+            )
+            if response_result.reviewed_count:
+                logger.info("Response handler result: %s", response_result.summary())
 
         if discovery_source_collector_agent.is_configured():
             source_collection_result = (
@@ -520,5 +539,73 @@ def _print_demo_output(
             print(f"Task Status: {task.status}")
 
 
+def generate_opportunities_outreach(limit: int, icp_filter: str | None) -> int:
+    notion_service = NotionService()
+    anthropic_service = AnthropicService()
+    supabase_service = SupabaseService()
+
+    agent = OpportunitiesOutreachAgent(
+        notion_service=notion_service,
+        anthropic_service=anthropic_service,
+        supabase_service=supabase_service,
+    )
+    if not agent.is_configured():
+        logger.error(
+            "OpportunitiesOutreachAgent is not configured. "
+            "Ensure NOTION_API_KEY, NOTION_OPPORTUNITIES_DATABASE_ID, "
+            "NOTION_OUTREACH_QUEUE_DATABASE_ID, and ANTHROPIC_API_KEY are set."
+        )
+        return 1
+
+    print(
+        f"About to generate outreach for up to {limit} prospects"
+        + (f" with ICP filter '{icp_filter}'" if icp_filter else "")
+        + ". Shadow mode is always on — messages queue for review only. "
+          "Proceed? (y/n): ",
+        end="",
+    )
+    answer = input().strip().lower()
+    if answer not in {"y", "yes"}:
+        print("Cancelled.")
+        return 0
+
+    result = agent.generate_outreach(limit=limit, icp_filter=icp_filter)
+    print("\nOutreach generation summary:")
+    print(f"  {result.summary()}")
+    if result.failures:
+        print("Failures:")
+        for prospect_label, reason in result.failures:
+            print(f"  - {prospect_label}: {reason}")
+    return 0
+
+
+def _parse_cli_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="globalkinect-sales",
+        description="GlobalKinect sales engine entry point.",
+    )
+    parser.add_argument(
+        "--generate-outreach",
+        action="store_true",
+        help="Generate outreach for prospects in the Notion Opportunities database.",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=50,
+        help="Maximum number of prospects to process (default: 50).",
+    )
+    parser.add_argument(
+        "--icp",
+        type=str,
+        default=None,
+        help="Optional ICP filter, e.g. 'A1 - Frustrated GCC Operator'.",
+    )
+    return parser.parse_args(argv)
+
+
 if __name__ == "__main__":
+    args = _parse_cli_args(sys.argv[1:])
+    if args.generate_outreach:
+        sys.exit(generate_opportunities_outreach(args.limit, args.icp))
     main()

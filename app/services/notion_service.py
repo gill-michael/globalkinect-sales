@@ -16,6 +16,7 @@ from app.models.operator_console import (
     OutreachQueueRecord,
     SalesEngineRunRecord,
 )
+from app.models.opportunity_record import OpportunityRecord
 from app.models.outreach_queue_item import OutreachQueueItem
 from app.models.pipeline_record import PipelineRecord
 from app.models.sales_engine_run import SalesEngineRun
@@ -70,11 +71,37 @@ class NotionService:
     OUTREACH_QUEUE_PRESERVE_STATUSES = {"approved", "sent", "hold"}
     OUTREACH_QUEUE_REGENERATE_STATUS = "regenerate"
 
+    OPPORTUNITY_ICP_SHORT_CODE_MAP: dict[str, str | None] = {
+        "a1": "A1 - Frustrated GCC Operator",
+        "a2": "A2 - GCC SME",
+        "a3": "A3 - Scaling GCC Business",
+        "b1": None,
+        "b2": "B2 - UK Domestic SME",
+        "b3": "B3 - International MENA Expander",
+        "b4": "B4 - European-MENA Bridge",
+        "b5": None,
+    }
+    OPPORTUNITY_ICP_SELECT_VALUES: set[str] = {
+        "A1 - Frustrated GCC Operator",
+        "A2 - GCC SME",
+        "A3 - Scaling GCC Business",
+        "B2 - UK Domestic SME",
+        "B3 - International MENA Expander",
+        "B4 - European-MENA Bridge",
+        "Unknown",
+    }
+    OPPORTUNITY_EXCLUDED_STATUSES: tuple[str, ...] = (
+        "Closed Won",
+        "Closed Lost",
+        "On Hold",
+    )
+
     def __init__(self, client: Any | None = None) -> None:
         self.api_key = settings.NOTION_API_KEY
         self.discovery_database_id = settings.NOTION_DISCOVERY_DATABASE_ID
         self.intake_database_id = settings.NOTION_INTAKE_DATABASE_ID
         self.outreach_queue_database_id = settings.NOTION_OUTREACH_QUEUE_DATABASE_ID
+        self.opportunities_database_id = settings.NOTION_OPPORTUNITIES_DATABASE_ID
         self.runs_database_id = settings.NOTION_RUNS_DATABASE_ID
         self.accounts_database_id = settings.NOTION_ACCOUNTS_DATABASE_ID
         self.buyers_database_id = settings.NOTION_BUYERS_DATABASE_ID
@@ -157,6 +184,9 @@ class NotionService:
 
     def is_outreach_queue_configured(self) -> bool:
         return self.is_configured() and bool(self.outreach_queue_database_id)
+
+    def is_opportunities_configured(self) -> bool:
+        return self.is_configured() and bool(self.opportunities_database_id)
 
     def is_run_logging_configured(self) -> bool:
         return self.is_configured() and bool(self.runs_database_id)
@@ -260,6 +290,80 @@ class NotionService:
 
         logger.info(f"Fetched {len(signals)} outreach queue feedback signals from Notion.")
         return signals
+
+    def fetch_outreach_queue_replied_records(
+        self,
+        limit: int = 50,
+    ) -> list[tuple[OutreachQueueRecord, str]]:
+        """Return queue records currently in the 'replied' status along with
+        the text of the operator-pasted `Reply` property. Records with empty
+        Reply are skipped."""
+        self._ensure_outreach_queue_configured()
+        response = self.client.post(
+            f"/databases/{self.outreach_queue_database_id}/query",
+            json={
+                "page_size": min(max(limit, 20), 100),
+                "filter": {
+                    "property": "Status",
+                    "select": {"equals": "replied"},
+                },
+                "sorts": [
+                    {
+                        "timestamp": "last_edited_time",
+                        "direction": "descending",
+                    }
+                ],
+            },
+        )
+        payload = self._parse_response(response)
+        out: list[tuple[OutreachQueueRecord, str]] = []
+        for page in payload.get("results", []):
+            record = self._build_outreach_queue_record(page)
+            if record is None:
+                continue
+            reply_text = self._property_text(page, "Reply")
+            if not reply_text:
+                continue
+            out.append((record, reply_text))
+            if len(out) >= limit:
+                break
+        logger.info("Fetched %s replied outreach queue records from Notion.", len(out))
+        return out
+
+    def ensure_outreach_queue_reply_property(self) -> bool:
+        """Add a `Reply` rich_text property to the Outreach Queue database if
+        it isn't already present. Returns True if the property now exists."""
+        self._ensure_outreach_queue_configured()
+        schema = self._get_database_schema(self.outreach_queue_database_id)
+        if "Reply" in schema:
+            return True
+        response = self.client.patch(
+            f"/databases/{self.outreach_queue_database_id}",
+            json={"properties": {"Reply": {"rich_text": {}}}},
+        )
+        self._parse_response(response)
+        self._database_schema_cache.pop(self.outreach_queue_database_id, None)
+        logger.info("Added Reply property to Outreach Queue database.")
+        return True
+
+    def update_outreach_queue_status_and_notes(
+        self,
+        page_id: str,
+        status: str,
+        notes: str | None,
+    ) -> dict[str, Any]:
+        """Lightweight update used by the response handler agent."""
+        self._ensure_outreach_queue_configured()
+        database_id = self.outreach_queue_database_id
+        properties: dict[str, Any] = {}
+        status_property = self._database_option_property(database_id, "Status", status)
+        if status_property is not None:
+            properties["Status"] = status_property
+        if notes is not None:
+            properties["Notes"] = self._rich_text(notes)
+        if not properties:
+            return {}
+        return self._update_page(page_id, properties)
 
     def fetch_pipeline_feedback_signals(
         self,
@@ -520,6 +624,207 @@ class NotionService:
             properties_builder=self._build_lead_properties,
             entity_label="lead pages",
         )
+
+    def fetch_opportunity_pages(
+        self,
+        limit: int = 50,
+        icp_filter: str | None = None,
+    ) -> list[OpportunityRecord]:
+        self._ensure_opportunities_configured()
+
+        resolved_icp = self._resolve_opportunity_icp_filter(icp_filter)
+        if icp_filter and resolved_icp is None:
+            logger.info(
+                "ICP filter '%s' has no matching select option in the Opportunities "
+                "database. Returning an empty result set.",
+                icp_filter,
+            )
+            return []
+
+        query: dict[str, Any] = {
+            "page_size": min(max(limit * 3, 20), 100),
+            "sorts": [
+                {
+                    "timestamp": "last_edited_time",
+                    "direction": "descending",
+                }
+            ],
+            "filter": self._build_opportunity_filter(resolved_icp),
+        }
+
+        response = self.client.post(
+            f"/databases/{self.opportunities_database_id}/query",
+            json=query,
+        )
+        payload = self._parse_response(response)
+
+        records: list[OpportunityRecord] = []
+        for page in payload.get("results", []):
+            record = self._build_opportunity_record(page)
+            if record is None:
+                continue
+            if not self._is_opportunity_eligible(record):
+                continue
+            records.append(record)
+            if len(records) >= limit:
+                break
+
+        logger.info(
+            "Fetched %s eligible opportunity records from Notion "
+            "(icp filter=%s, resolved=%s).",
+            len(records),
+            icp_filter or "all",
+            resolved_icp or "none",
+        )
+        return records
+
+    def _resolve_opportunity_icp_filter(
+        self,
+        icp_filter: str | None,
+    ) -> str | None:
+        if not icp_filter:
+            return None
+        cleaned = icp_filter.strip()
+        if not cleaned:
+            return None
+        if cleaned in self.OPPORTUNITY_ICP_SELECT_VALUES:
+            return cleaned
+        short_key = cleaned.lower()
+        if short_key in self.OPPORTUNITY_ICP_SHORT_CODE_MAP:
+            return self.OPPORTUNITY_ICP_SHORT_CODE_MAP[short_key]
+        return None
+
+    def _build_opportunity_filter(
+        self,
+        resolved_icp: str | None,
+    ) -> dict[str, Any]:
+        status_exclusions = [
+            {
+                "property": "Status",
+                "select": {"does_not_equal": status_value},
+            }
+            for status_value in self.OPPORTUNITY_EXCLUDED_STATUSES
+        ]
+        conditions: list[dict[str, Any]] = []
+        if resolved_icp:
+            conditions.append(
+                {
+                    "property": "ICP",
+                    "select": {"equals": resolved_icp},
+                }
+            )
+        conditions.extend(status_exclusions)
+        if len(conditions) == 1:
+            return conditions[0]
+        return {"and": conditions}
+
+    def update_opportunity_page(
+        self,
+        page_id: str,
+        properties: dict[str, Any],
+    ) -> dict[str, Any]:
+        self._ensure_opportunities_configured()
+        return self._update_page(page_id, properties)
+
+    def _build_opportunity_record(
+        self,
+        page: dict[str, Any],
+    ) -> OpportunityRecord | None:
+        company_name = self._property_text(page, "Company")
+        if not company_name:
+            return None
+
+        notes = self._property_text(page, "Notes")
+        linkedin_url = self._extract_linkedin_url(notes)
+
+        return OpportunityRecord(
+            page_id=page["id"],
+            company_name=company_name,
+            contact_name=self._property_text(page, "Contact Name"),
+            contact_role=self._property_text(page, "Contact Role"),
+            contact_email=self._property_value(page, "Contact Email"),
+            linkedin_url=linkedin_url,
+            countries=self._property_multi_select(page, "Countries"),
+            icp=self._property_option(page, "ICP"),
+            source=self._property_option(page, "Source")
+            or self._property_text(page, "Source"),
+            headcount=self._property_option(page, "Headcount")
+            or self._property_text(page, "Headcount")
+            or self._stringify_number(self._property_number(page, "Headcount")),
+            notes=notes,
+            status=self._property_option(page, "Status"),
+            next_action=self._property_option(page, "Next Action")
+            or self._property_text(page, "Next Action"),
+            next_action_date=self._property_date(page, "Next Action Date"),
+            fit_score=self._property_number(page, "Fit Score"),
+            modules_interested_in=self._property_multi_select(
+                page, "Modules Interested In"
+            ),
+            operating_model_preference=self._property_option(
+                page, "Operating Model Preference"
+            )
+            or self._property_text(page, "Operating Model Preference"),
+            current_setup=self._property_text(page, "Current Setup"),
+            main_problem=self._property_text(page, "Main Problem"),
+            expanding_to=self._property_multi_select(page, "Expanding To"),
+            estimated_headcount_at_start=self._property_number(
+                page, "Estimated Headcount at Start"
+            ),
+            demo_date=self._property_date(page, "Demo Date"),
+        )
+
+    def _is_opportunity_eligible(self, record: OpportunityRecord) -> bool:
+        status = (record.status or "").strip().lower()
+        if status in {"closed won", "closed lost", "on hold"}:
+            return False
+
+        next_action = (record.next_action or "").strip().lower()
+        if next_action and "generate outreach" not in next_action:
+            return False
+
+        has_email = bool((record.contact_email or "").strip())
+        has_linkedin = bool((record.linkedin_url or "").strip())
+        if not (has_email or has_linkedin):
+            return False
+
+        return True
+
+    def _extract_linkedin_url(self, notes: str | None) -> str | None:
+        if not notes:
+            return None
+        for line in notes.splitlines():
+            stripped = line.strip()
+            if not stripped:
+                continue
+            lower = stripped.lower()
+            if lower.startswith("linkedin:"):
+                value = stripped.split(":", 1)[1].strip()
+                if value:
+                    return value
+        match = re.search(
+            r"(?:https?://)?(?:[a-z]{2,3}\.)?linkedin\.com/[^\s\])]+",
+            notes,
+            re.IGNORECASE,
+        )
+        if not match:
+            return None
+        return match.group(0).rstrip(".,);]")
+
+    def _stringify_number(self, value: int | None) -> str | None:
+        if value is None:
+            return None
+        return str(value)
+
+    def _property_multi_select(
+        self,
+        page: dict[str, Any],
+        property_name: str,
+    ) -> list[str]:
+        property_value = page.get("properties", {}).get(property_name)
+        if not property_value or property_value.get("type") != "multi_select":
+            return []
+        options = property_value.get("multi_select", []) or []
+        return [option.get("name", "") for option in options if option.get("name")]
 
     def upsert_outreach_queue_pages(
         self,
@@ -987,6 +1292,11 @@ class NotionService:
         self._ensure_configured()
         if not self.outreach_queue_database_id:
             raise RuntimeError("Notion outreach queue database is not configured.")
+
+    def _ensure_opportunities_configured(self) -> None:
+        self._ensure_configured()
+        if not self.opportunities_database_id:
+            raise RuntimeError("Notion opportunities database is not configured.")
 
     def _ensure_run_logging_configured(self) -> None:
         self._ensure_configured()

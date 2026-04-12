@@ -8,7 +8,17 @@
       "Read(//c/Users/gill_/.claude/projects/c--dev-globalkinect-engines-sales/**)",
       "Bash(grep -r \"historical\\\\|transition\\\\|older\\\\|For current rollout guidance\" c:\\\\dev\\\\globalkinect-engines\\\\sales/*.md)",
       "Bash(mkdir -p /c/dev/globalkinect-engines/sales/docs/archive)",
-      "Bash(mv /c/dev/globalkinect-engines/sales/BUILD_LOG.md /c/dev/globalkinect-engines/sales/SALES_ENGINE_TASKLIST.md /c/dev/globalkinect-engines/sales/INTERACTION_POLISH_CHANGELOG.md /c/dev/globalkinect-engines/sales/docs/archive/)"
+      "Bash(mv /c/dev/globalkinect-engines/sales/BUILD_LOG.md /c/dev/globalkinect-engines/sales/SALES_ENGINE_TASKLIST.md /c/dev/globalkinect-engines/sales/INTERACTION_POLISH_CHANGELOG.md /c/dev/globalkinect-engines/sales/docs/archive/)",
+      "Bash(./venv/Scripts/python.exe -m pytest tests/ -x --tb=short)",
+      "Bash(./venv/Scripts/python.exe -c ':*)",
+      "Bash(./venv/Scripts/python.exe -m pytest tests/ --deselect tests/test_operator_console.py::test_queue_page_renders_outreach_rows -q)",
+      "Bash(PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe _apply_sources.py)",
+      "Bash(rm _apply_sources.py)",
+      "Bash(PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe -m pytest tests/ --deselect tests/test_operator_console.py::test_queue_page_renders_outreach_rows -q)",
+      "Bash(PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe scripts/vibe_prospecting_scan.py --help)",
+      "Bash(PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe -m pytest tests/test_main.py -v --tb=short)",
+      "WebFetch(domain:developers.explorium.ai)",
+      "Bash(PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe scripts/vibe_prospecting_scan.py --region gcc --icp A1 --limit 5 --dry-run)"
     ],
     "additionalDirectories": [
       "C:\\dev\\globalkinect-engines\\sales\\app\\services",

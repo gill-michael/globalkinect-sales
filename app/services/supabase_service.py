@@ -25,6 +25,7 @@ class SupabaseService:
     TABLE_SOLUTION_RECOMMENDATIONS = "solution_recommendations"
     TABLE_DEAL_SUPPORT_PACKAGES = "deal_support_packages"
     TABLE_EXECUTION_TASKS = "execution_tasks"
+    TABLE_RESPONSE_EVENTS = "response_events"
     TABLE_FIELD_EXCLUSIONS: dict[str, set[str]] = {
         TABLE_LEADS: {
             "feedback_summary",
@@ -124,6 +125,16 @@ class SupabaseService:
     ) -> Any:
         return self._insert_models(self.TABLE_EXECUTION_TASKS, tasks)
 
+    def insert_response_events(self, events: list[dict]) -> None:
+        if not events:
+            logger.info(f"No records to insert into {self.TABLE_RESPONSE_EVENTS}.")
+            return
+        self._ensure_configured()
+        logger.info(
+            f"Inserting {len(events)} records into {self.TABLE_RESPONSE_EVENTS}."
+        )
+        self.client.table(self.TABLE_RESPONSE_EVENTS).insert(events).execute()
+
     def fetch_leads(self, limit: int = 20) -> Any:
         return self._fetch_rows(self.TABLE_LEADS, limit)
 
@@ -150,6 +161,41 @@ class SupabaseService:
 
     def fetch_execution_tasks(self, limit: int = 20) -> Any:
         return self._fetch_rows(self.TABLE_EXECUTION_TASKS, limit)
+
+    def fetch_deal_support_package_by_lead_reference(
+        self,
+        lead_reference: str,
+    ) -> DealSupportPackage | None:
+        self._ensure_configured()
+        response = (
+            self.client.table(self.TABLE_DEAL_SUPPORT_PACKAGES)
+            .select("*")
+            .eq("lead_reference", lead_reference)
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        rows = getattr(response, "data", response) or []
+        if not rows:
+            return None
+        return DealSupportPackage.model_validate(rows[0])
+
+    def fetch_solution_recommendation_by_lead_reference(
+        self,
+        lead_reference: str,
+    ) -> SolutionRecommendation | None:
+        self._ensure_configured()
+        response = (
+            self.client.table(self.TABLE_SOLUTION_RECOMMENDATIONS)
+            .select("*")
+            .eq("lead_reference", lead_reference)
+            .limit(1)
+            .execute()
+        )
+        rows = getattr(response, "data", response) or []
+        if not rows:
+            return None
+        return SolutionRecommendation.model_validate(rows[0])
 
     def _fetch_rows(self, table_name: str, limit: int) -> Any:
         self._ensure_configured()
