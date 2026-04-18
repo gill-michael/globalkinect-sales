@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import Any, Callable
 
 from fastapi import APIRouter, Query, Response
+from pydantic import BaseModel
 
 from app.services.notion_service import NotionService
 from app.utils.logger import get_logger
@@ -20,6 +21,17 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 ERROR_HEADER = "X-Notion-Proxy-Error"
+
+OUTREACH_STATUS_VALUES = {"ready_to_send", "approved", "hold", "sent", "replied"}
+INTAKE_STATUS_VALUES = {"new", "ready", "ingested", "rejected", "error"}
+
+
+class StatusUpdateBody(BaseModel):
+    status: str
+
+
+class NoteUpdateBody(BaseModel):
+    note: str
 
 
 def _get_notion_service() -> NotionService:
@@ -128,6 +140,103 @@ def get_runs(
         else:
             record["duration_seconds"] = None
     return records[:limit]
+
+
+def _safe_write(
+    response: Response,
+    action: Callable[[], Any],
+    context: str,
+) -> dict[str, Any]:
+    try:
+        result = action()
+    except Exception as exc:
+        logger.warning("Notion proxy %s failed: %s", context, exc)
+        response.status_code = 500
+        response.headers[ERROR_HEADER] = f"{context}: {exc}"
+        return {}
+    if result is None:
+        return {}
+    return _dump(result) if not isinstance(result, dict) else result
+
+
+@router.patch("/outreach-queue/{record_id}/status")
+def patch_outreach_status(
+    record_id: str,
+    body: StatusUpdateBody,
+    response: Response,
+) -> dict[str, Any]:
+    if body.status not in OUTREACH_STATUS_VALUES:
+        response.status_code = 400
+        response.headers[ERROR_HEADER] = f"invalid status: {body.status}"
+        return {}
+    service = _get_notion_service()
+    return _safe_write(
+        response,
+        lambda: service.update_outreach_queue_record_status(record_id, body.status),
+        context="outreach-queue-status",
+    )
+
+
+@router.patch("/outreach-queue/{record_id}/approve")
+def patch_outreach_approve(
+    record_id: str,
+    response: Response,
+) -> dict[str, Any]:
+    service = _get_notion_service()
+    return _safe_write(
+        response,
+        lambda: service.update_outreach_queue_record_status(record_id, "approved"),
+        context="outreach-queue-approve",
+    )
+
+
+@router.patch("/outreach-queue/{record_id}/hold")
+def patch_outreach_hold(
+    record_id: str,
+    response: Response,
+) -> dict[str, Any]:
+    service = _get_notion_service()
+    return _safe_write(
+        response,
+        lambda: service.update_outreach_queue_record_status(record_id, "hold"),
+        context="outreach-queue-hold",
+    )
+
+
+@router.patch("/runs/{record_id}/note")
+def patch_run_note(
+    record_id: str,
+    body: NoteUpdateBody,
+    response: Response,
+) -> dict[str, Any]:
+    if not body.note or not body.note.strip():
+        response.status_code = 400
+        response.headers[ERROR_HEADER] = "note text is required"
+        return {}
+    service = _get_notion_service()
+    return _safe_write(
+        response,
+        lambda: service.append_sales_engine_run_note(record_id, body.note),
+        context="runs-note",
+    )
+
+
+@router.patch("/intake/{record_id}/status")
+def patch_intake_status(
+    record_id: str,
+    body: StatusUpdateBody,
+    response: Response,
+) -> dict[str, Any]:
+    if body.status not in INTAKE_STATUS_VALUES:
+        response.status_code = 400
+        response.headers[ERROR_HEADER] = f"invalid status: {body.status}"
+        return {}
+    service = _get_notion_service()
+    return _safe_write(
+        response,
+        lambda: service.update_lead_intake_record_status(record_id, body.status),
+        context="intake-status",
+    )
 
 
 @router.get("/outreach-queue")

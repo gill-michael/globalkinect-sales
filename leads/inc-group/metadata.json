@@ -1,0 +1,53 @@
+{
+  "lead": {
+    "rank": 12,
+    "score": 82,
+    "source": "R1",
+    "full_name": "Andrew Charles Barkman",
+    "role": "Chairman / founder",
+    "company": "Inc group",
+    "website": "inc-group.com",
+    "professional_email": "abarkman@inc-solutions.com",
+    "personal_email": "",
+    "best_email": "abarkman@inc-solutions.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAADImFgBJq1JCr4ocsED-9ERy-J53R_XNTI",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "inc-group",
+  "processed_at": "2026-04-18T14:04:19+00:00",
+  "status": {
+    "lead": "Andrew Charles Barkman",
+    "company": "Inc group",
+    "slug": "inc-group",
+    "report_generated": true,
+    "email_generated": true,
+    "skipped_research": false,
+    "skipped_email": false,
+    "errors": [],
+    "perplexity_usage": {
+      "prompt_tokens": 1137,
+      "completion_tokens": 1532,
+      "total_tokens": 2669,
+      "num_search_queries": 10,
+      "cost": {
+        "input_tokens_cost": 0.00227,
+        "output_tokens_cost": 0.01226,
+        "search_queries_cost": 0.05,
+        "total_cost": 0.06453
+      }
+    },
+    "claude_usage": {
+      "input_tokens": 3991,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 440,
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+}

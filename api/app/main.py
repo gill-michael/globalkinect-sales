@@ -17,7 +17,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[DASHBOARD_ORIGIN],
     allow_credentials=False,
-    allow_methods=["GET"],
+    allow_methods=["GET", "PATCH", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["X-Notion-Proxy-Error"],
 )

@@ -1,0 +1,57 @@
+{
+  "lead": {
+    "rank": 17,
+    "score": 81,
+    "source": "R2",
+    "full_name": "Matt Seale",
+    "role": "Executive shareholder and finance director",
+    "company": "Tarpon power and control",
+    "website": "tarpon-energy.com",
+    "professional_email": "matt.seale@tarpon-energy.com",
+    "personal_email": "mattseale8@gmail.com",
+    "best_email": "matt.seale@tarpon-energy.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAAEX254BBRrDhaEnCEFIpj-Ermid29DHFNU",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "tarpon-power-and-control",
+  "processed_at": "2026-04-18T14:15:12+00:00",
+  "status": {
+    "lead": "Matt Seale",
+    "company": "Tarpon power and control",
+    "slug": "tarpon-power-and-control",
+    "report_generated": true,
+    "email_generated": true,
+    "skipped_research": false,
+    "skipped_email": false,
+    "errors": [],
+    "perplexity_usage": {
+      "prompt_tokens": 1139,
+      "completion_tokens": 4499,
+      "total_tokens": 5638,
+      "citation_tokens": 7351,
+      "num_search_queries": 54,
+      "reasoning_tokens": 86743,
+      "cost": {
+        "input_tokens_cost": 0.00228,
+        "output_tokens_cost": 0.03599,
+        "citation_tokens_cost": 0.0147,
+        "reasoning_tokens_cost": 0.26023,
+        "search_queries_cost": 0.27,
+        "total_cost": 0.5832
+      }
+    },
+    "claude_usage": {
+      "input_tokens": 11364,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 395,
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "lead": {
+    "rank": 15,
+    "score": 81,
+    "source": "R2",
+    "full_name": "Mohamed Seddeak, Mba, Dba ( In Progress)",
+    "role": "Chief financial officer",
+    "company": "Almanea",
+    "website": "almanea.sa",
+    "professional_email": "mohamed.seddeak@almanea.sa",
+    "personal_email": "",
+    "best_email": "mohamed.seddeak@almanea.sa",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAAsxB4UBiyOAsFyp0FU1EoYZDMxFUfKREKU",
+    "prospect_country": "saudi arabia"
+  },
+  "slug": "almanea",
+  "processed_at": "2026-04-18T14:10:58+00:00",
+  "status": {
+    "lead": "Mohamed Seddeak, Mba, Dba ( In Progress)",
+    "company": "Almanea",
+    "slug": "almanea",
+    "report_generated": true,
+    "email_generated": true,
+    "skipped_research": false,
+    "skipped_email": false,
+    "errors": [],
+    "perplexity_usage": {
+      "prompt_tokens": 1169,
+      "completion_tokens": 5541,
+      "total_tokens": 6710,
+      "citation_tokens": 12632,
+      "num_search_queries": 42,
+      "reasoning_tokens": 110135,
+      "cost": {
+        "input_tokens_cost": 0.00234,
+        "output_tokens_cost": 0.04433,
+        "citation_tokens_cost": 0.02526,
+        "reasoning_tokens_cost": 0.33041,
+        "search_queries_cost": 0.21,
+        "total_cost": 0.61233
+      }
+    },
+    "claude_usage": {
+      "input_tokens": 13581,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 472,
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+}

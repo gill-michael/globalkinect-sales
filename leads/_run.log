@@ -1,0 +1,158 @@
+[2026-04-18T13:44:04+00:00] ======================================================================
+[2026-04-18T13:44:04+00:00] Global Kinect lead pipeline starting
+[2026-04-18T13:44:04+00:00]   CSV: ..\csv\vibe_combined_top30.csv
+[2026-04-18T13:44:04+00:00]   Output root: C:\dev\globalkinect\sales\leads
+[2026-04-18T13:44:04+00:00]   Dry run: False
+[2026-04-18T13:44:04+00:00] ======================================================================
+[2026-04-18T13:44:04+00:00] Processing 3 leads
+[2026-04-18T13:44:04+00:00] 
+[1/3] Bhushan Mehta - Cma, Pmp, Rmp — Group chief financial officer @ Kirtanlal scaffolding and formwork
+[2026-04-18T13:44:04+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:45:33+00:00]   ✓ Saved report.md (24883 chars, 39 citations)
+[2026-04-18T13:45:33+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:45:42+00:00]   ✓ Saved email.md (1218 chars)
+[2026-04-18T13:45:44+00:00] 
+[2/3] Hakam Melhem — Group chief financial officer @ Bin harmal group
+[2026-04-18T13:45:44+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:46:10+00:00]   ✓ Saved report.md (9201 chars, 0 citations)
+[2026-04-18T13:46:10+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:46:18+00:00]   ✓ Saved email.md (1270 chars)
+[2026-04-18T13:46:20+00:00] 
+[3/3] Shafat Ali — Group finance director @ Eatx
+[2026-04-18T13:46:20+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:47:51+00:00]   ✓ Saved report.md (33030 chars, 50 citations)
+[2026-04-18T13:47:51+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:48:02+00:00]   ✓ Saved email.md (1241 chars)
+[2026-04-18T13:48:02+00:00] 
+======================================================================
+[2026-04-18T13:48:02+00:00] Summary:
+[2026-04-18T13:48:02+00:00]   Processed: 3
+[2026-04-18T13:48:02+00:00]   Reports generated: 3
+[2026-04-18T13:48:02+00:00]   Emails generated: 3
+[2026-04-18T13:48:02+00:00]   Errors: 0
+[2026-04-18T13:48:02+00:00]   Output: C:\dev\globalkinect\sales\leads
+[2026-04-18T13:50:30+00:00] ======================================================================
+[2026-04-18T13:50:30+00:00] Global Kinect lead pipeline starting
+[2026-04-18T13:50:30+00:00]   CSV: ..\csv\vibe_combined_top30.csv
+[2026-04-18T13:50:30+00:00]   Output root: C:\dev\globalkinect\sales\leads
+[2026-04-18T13:50:30+00:00]   Dry run: False
+[2026-04-18T13:50:30+00:00] ======================================================================
+[2026-04-18T13:50:30+00:00] Processing 20 leads
+[2026-04-18T13:50:30+00:00] 
+[1/20] Bhushan Mehta - Cma, Pmp, Rmp — Group chief financial officer @ Kirtanlal scaffolding and formwork
+[2026-04-18T13:50:30+00:00]   ⏭  report.md exists — skipping research step
+[2026-04-18T13:50:30+00:00]   ⏭  email.md exists — skipping email step
+[2026-04-18T13:50:32+00:00] 
+[2/20] Hakam Melhem — Group chief financial officer @ Bin harmal group
+[2026-04-18T13:50:32+00:00]   ⏭  report.md exists — skipping research step
+[2026-04-18T13:50:32+00:00]   ⏭  email.md exists — skipping email step
+[2026-04-18T13:50:34+00:00] 
+[3/20] Shafat Ali — Group finance director @ Eatx
+[2026-04-18T13:50:34+00:00]   ⏭  report.md exists — skipping research step
+[2026-04-18T13:50:34+00:00]   ⏭  email.md exists — skipping email step
+[2026-04-18T13:50:36+00:00] 
+[4/20] Rejeesh R  Pillai — Group finance director @ Legend holding group
+[2026-04-18T13:50:36+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:52:52+00:00]   ✓ Saved report.md (49954 chars, 36 citations)
+[2026-04-18T13:52:52+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:53:01+00:00]   ✓ Saved email.md (1267 chars)
+[2026-04-18T13:53:03+00:00] 
+[5/20] Tamer Taha — Chief financial officer @ Tactile food group
+[2026-04-18T13:53:03+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:55:26+00:00]   ✓ Saved report.md (54498 chars, 36 citations)
+[2026-04-18T13:55:26+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:55:37+00:00]   ✓ Saved email.md (1211 chars)
+[2026-04-18T13:55:39+00:00] 
+[6/20] Akash Goyal, Ca (india), Cpa (usa) — Head of finance @ Sharafi group investments
+[2026-04-18T13:55:39+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:56:52+00:00]   ✓ Saved report.md (17988 chars, 33 citations)
+[2026-04-18T13:56:52+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:57:01+00:00]   ✓ Saved email.md (1302 chars)
+[2026-04-18T13:57:03+00:00] 
+[7/20] Huma F. — Head of finance department @ Tyloz group
+[2026-04-18T13:57:03+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:59:16+00:00]   ✓ Saved report.md (44594 chars, 31 citations)
+[2026-04-18T13:59:16+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T13:59:27+00:00]   ✓ Saved email.md (1151 chars)
+[2026-04-18T13:59:29+00:00] 
+[8/20] Matthieu Prouillac — Finance director - commercial finance and transformation @ Seddiqi holding
+[2026-04-18T13:59:29+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T13:59:53+00:00]   ✓ Saved report.md (8666 chars, 0 citations)
+[2026-04-18T13:59:53+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:00:02+00:00]   ✓ Saved email.md (1403 chars)
+[2026-04-18T14:00:04+00:00] 
+[9/20] Nizar Aboudiab — Head of human resources @ Faham group
+[2026-04-18T14:00:04+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:01:53+00:00]   ✓ Saved report.md (36293 chars, 35 citations)
+[2026-04-18T14:01:53+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:02:03+00:00]   ✓ Saved email.md (1109 chars)
+[2026-04-18T14:02:05+00:00] 
+[10/20] Sonam Lama — Group human resources director @ Legend holding group
+[2026-04-18T14:02:05+00:00]   ⏭  report.md exists — skipping research step
+[2026-04-18T14:02:05+00:00]   ⏭  email.md exists — skipping email step
+[2026-04-18T14:02:07+00:00] 
+[11/20] Amjad Sithara — Founder & chairman @ Bcc group international
+[2026-04-18T14:02:07+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:03:34+00:00]   ✓ Saved report.md (20064 chars, 43 citations)
+[2026-04-18T14:03:34+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:03:44+00:00]   ✓ Saved email.md (1228 chars)
+[2026-04-18T14:03:46+00:00] 
+[12/20] Andrew Charles Barkman — Chairman / founder @ Inc group
+[2026-04-18T14:03:46+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:04:10+00:00]   ✓ Saved report.md (7502 chars, 0 citations)
+[2026-04-18T14:04:10+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:04:19+00:00]   ✓ Saved email.md (1375 chars)
+[2026-04-18T14:04:21+00:00] 
+[13/20] Rahul Sharma — Chief financial officer @ Unikai foods pjsc
+[2026-04-18T14:04:21+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:06:10+00:00]   ✓ Saved report.md (35248 chars, 36 citations)
+[2026-04-18T14:06:10+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:06:21+00:00]   ✓ Saved email.md (1458 chars)
+[2026-04-18T14:06:23+00:00] 
+[14/20] Ca Kumar Anand — Chief financial officer @ شركة آبار حائل للمياه | abar hail water
+[2026-04-18T14:06:23+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:08:52+00:00]   ✓ Saved report.md (64301 chars, 31 citations)
+[2026-04-18T14:08:52+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:09:01+00:00]   ✓ Saved email.md (1252 chars)
+[2026-04-18T14:09:03+00:00] 
+[15/20] Mohamed Seddeak, Mba, Dba ( In Progress) — Chief financial officer @ Almanea
+[2026-04-18T14:09:03+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:10:48+00:00]   ✓ Saved report.md (35002 chars, 50 citations)
+[2026-04-18T14:10:48+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:10:58+00:00]   ✓ Saved email.md (1480 chars)
+[2026-04-18T14:11:00+00:00] 
+[16/20] Suneeth Jose — Head of finance @ Sanford middle east dwc
+[2026-04-18T14:11:00+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:13:16+00:00]   ✓ Saved report.md (42954 chars, 42 citations)
+[2026-04-18T14:13:16+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:13:27+00:00]   ✓ Saved email.md (1444 chars)
+[2026-04-18T14:13:29+00:00] 
+[17/20] Matt Seale — Executive shareholder and finance director @ Tarpon power and control
+[2026-04-18T14:13:29+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:15:03+00:00]   ✓ Saved report.md (30981 chars, 40 citations)
+[2026-04-18T14:15:03+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:15:12+00:00]   ✓ Saved email.md (1257 chars)
+[2026-04-18T14:15:14+00:00] 
+[18/20] Andrew Berry — Head of finance and operations @ British international school jeddah
+[2026-04-18T14:15:14+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:17:03+00:00]   ✓ Saved report.md (31701 chars, 50 citations)
+[2026-04-18T14:17:03+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:17:13+00:00]   ✓ Saved email.md (1223 chars)
+[2026-04-18T14:17:15+00:00] 
+[19/20] Marjana Amjad — Chief executive officer @ Bcc group international
+[2026-04-18T14:17:15+00:00]   ⏭  report.md exists — skipping research step
+[2026-04-18T14:17:15+00:00]   ⏭  email.md exists — skipping email step
+[2026-04-18T14:17:17+00:00] 
+[20/20] Fouaz Alsharari — Chief executive officer @ Cit group
+[2026-04-18T14:17:17+00:00]   🔎 Researching via Perplexity (sonar-deep-research)...
+[2026-04-18T14:17:29+00:00]   ✓ Saved report.md (3777 chars, 0 citations)
+[2026-04-18T14:17:29+00:00]   ✍  Drafting email via Claude (claude-opus-4-7)...
+[2026-04-18T14:17:39+00:00]   ✓ Saved email.md (1478 chars)
+[2026-04-18T14:17:39+00:00] 
+======================================================================
+[2026-04-18T14:17:39+00:00] Summary:
+[2026-04-18T14:17:39+00:00]   Processed: 20
+[2026-04-18T14:17:39+00:00]   Reports generated: 15
+[2026-04-18T14:17:39+00:00]   Emails generated: 15
+[2026-04-18T14:17:39+00:00]   Errors: 0
+[2026-04-18T14:17:39+00:00]   Output: C:\dev\globalkinect\sales\leads

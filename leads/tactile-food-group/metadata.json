@@ -1,0 +1,57 @@
+{
+  "lead": {
+    "rank": 5,
+    "score": 85,
+    "source": "R1",
+    "full_name": "Tamer Taha",
+    "role": "Chief financial officer",
+    "company": "Tactile food group",
+    "website": "tactilefood.com",
+    "professional_email": "tamer@tactilefood.com",
+    "personal_email": "",
+    "best_email": "tamer@tactilefood.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAAkPobcBQbrLMnbsAAkmasNCFM8PMEVe178",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "tactile-food-group",
+  "processed_at": "2026-04-18T13:55:37+00:00",
+  "status": {
+    "lead": "Tamer Taha",
+    "company": "Tactile food group",
+    "slug": "tactile-food-group",
+    "report_generated": true,
+    "email_generated": true,
+    "skipped_research": false,
+    "skipped_email": false,
+    "errors": [],
+    "perplexity_usage": {
+      "prompt_tokens": 1142,
+      "completion_tokens": 8970,
+      "total_tokens": 10112,
+      "citation_tokens": 7559,
+      "num_search_queries": 52,
+      "reasoning_tokens": 85523,
+      "cost": {
+        "input_tokens_cost": 0.00228,
+        "output_tokens_cost": 0.07176,
+        "citation_tokens_cost": 0.01512,
+        "reasoning_tokens_cost": 0.25657,
+        "search_queries_cost": 0.26,
+        "total_cost": 0.60573
+      }
+    },
+    "claude_usage": {
+      "input_tokens": 18375,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 389,
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "lead": {
+    "rank": 13,
+    "score": 81,
+    "source": "R1",
+    "full_name": "Rahul Sharma",
+    "role": "Chief financial officer",
+    "company": "Unikai foods pjsc",
+    "website": "unikai.com",
+    "professional_email": "rahul.sharma@unikai.com",
+    "personal_email": "",
+    "best_email": "rahul.sharma@unikai.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAACwdlPMBLO_sYUp34ZJy3FXvq8tegbMESBQ",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "unikai-foods-pjsc",
+  "processed_at": "2026-04-18T14:06:21+00:00",
+  "status": {
+    "lead": "Rahul Sharma",
+    "company": "Unikai foods pjsc",
+    "slug": "unikai-foods-pjsc",
+    "report_generated": true,
+    "email_generated": true,
+    "skipped_research": false,
+    "skipped_email": false,
+    "errors": [],
+    "perplexity_usage": {
+      "prompt_tokens": 1141,
+      "completion_tokens": 5490,
+      "total_tokens": 6631,
+      "citation_tokens": 8659,
+      "num_search_queries": 56,
+      "reasoning_tokens": 91832,
+      "cost": {
+        "input_tokens_cost": 0.00228,
+        "output_tokens_cost": 0.04392,
+        "citation_tokens_cost": 0.01732,
+        "reasoning_tokens_cost": 0.2755,
+        "search_queries_cost": 0.28,
+        "total_cost": 0.61902
+      }
+    },
+    "claude_usage": {
+      "input_tokens": 12868,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 471,
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+}

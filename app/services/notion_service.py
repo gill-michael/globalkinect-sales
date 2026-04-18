@@ -450,6 +450,53 @@ class NotionService:
                 records.append(record)
         return records
 
+    def update_outreach_queue_record_status(
+        self,
+        page_id: str,
+        status: str,
+    ) -> dict[str, Any]:
+        """Set the Status field on a single Outreach Queue record."""
+        self._ensure_outreach_queue_configured()
+        status_property = self._database_option_property(
+            self.outreach_queue_database_id, "Status", status
+        )
+        if status_property is None:
+            raise RuntimeError(
+                f"Could not set Outreach Queue status to '{status}'"
+            )
+        return self._update_page(page_id, {"Status": status_property})
+
+    def update_lead_intake_record_status(
+        self,
+        page_id: str,
+        status: str,
+    ) -> dict[str, Any]:
+        """Set the Status field on a single Lead Intake record."""
+        self._ensure_intake_configured()
+        status_property = self._database_option_property(
+            self.intake_database_id, "Status", status
+        )
+        if status_property is None:
+            raise RuntimeError(
+                f"Could not set Lead Intake status to '{status}'"
+            )
+        return self._update_page(page_id, {"Status": status_property})
+
+    def append_sales_engine_run_note(
+        self,
+        page_id: str,
+        note: str,
+    ) -> dict[str, Any]:
+        """Append text to the Notes field on a Sales Engine Run record."""
+        self._ensure_run_logging_configured()
+        if not note or not note.strip():
+            raise RuntimeError("Note text is required")
+        response = self.client.get(f"/pages/{page_id}")
+        payload = self._parse_response(response)
+        existing = self._property_text(payload, "Notes") or ""
+        combined = f"{existing}\n{note}" if existing else note
+        return self._update_page(page_id, {"Notes": self._rich_text(combined)})
+
     def list_sales_engine_runs(
         self,
         limit: int = 50,

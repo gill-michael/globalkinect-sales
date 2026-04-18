@@ -1,0 +1,29 @@
+{
+  "lead": {
+    "rank": 19,
+    "score": 80,
+    "source": "R1",
+    "full_name": "Marjana Amjad",
+    "role": "Chief executive officer",
+    "company": "Bcc group international",
+    "website": "bccgroupinternational.com",
+    "professional_email": "marjana@bccgroupinternational.com",
+    "personal_email": "",
+    "best_email": "marjana@bccgroupinternational.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAEpThcwBEB7kHMrvMyilsEQ0lOqC_gBoLU4",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "bcc-group-international",
+  "processed_at": "2026-04-18T14:17:15+00:00",
+  "status": {
+    "lead": "Marjana Amjad",
+    "company": "Bcc group international",
+    "slug": "bcc-group-international",
+    "report_generated": false,
+    "email_generated": false,
+    "skipped_research": true,
+    "skipped_email": true,
+    "errors": []
+  }
+}

@@ -198,6 +198,9 @@ class DiscoverySourceService:
             else settings.DISCOVERY_SOURCE_MAX_ITEMS_PER_SOURCE
         )
         self.client = None
+        # Set by _parse_feed_entries on recovery; read by collect_candidates
+        # to emit the per-source health log.
+        self._last_parse_status: str = "success"
 
         if client is not None:
             self.client = client
@@ -287,8 +290,15 @@ class DiscoverySourceService:
 
         candidates: list[DiscoveryCandidate] = []
         for source in sources:
+            # Per-source health tracking. _parse_feed_entries upgrades this
+            # to "fallback_success" when it recovers from malformed XML.
+            self._last_parse_status = "success"
+            items_found = 0
+            source_status = "success"
             try:
                 entries = self._load_entries_for_source(source)
+                items_found = len(entries)
+                source_status = self._last_parse_status
                 max_items = source.max_items or self.max_items_per_source
                 for entry in entries[:max_items]:
                     candidate = self._build_candidate_from_entry(
@@ -298,10 +308,21 @@ class DiscoverySourceService:
                     )
                     if candidate is not None:
                         candidates.append(candidate)
-            except Exception:
-                logger.exception(
-                    "Discovery source collection failed for %s.",
-                    source.feed_url or source.company_name,
+            except Exception as exc:
+                source_status = "failed"
+                logger.warning(
+                    "Discovery source failed: name=%s url=%s error=%s",
+                    source.company_name or "unknown",
+                    source.feed_url or "",
+                    exc,
+                )
+            finally:
+                logger.info(
+                    "[source-health] name=%s url=%s items_found=%s status=%s",
+                    source.company_name or "unknown",
+                    source.feed_url or "",
+                    items_found,
+                    source_status,
                 )
 
         candidates = self._deduplicate_candidates(candidates)
@@ -409,8 +430,66 @@ class DiscoverySourceService:
             return response.text
         return str(response)
 
+    def _clean_xml_for_parse(self, xml_text: str) -> str:
+        """Salvage a mis-formed XML body so feedparsing can retry.
+
+        Two common publisher pathologies:
+          * Bytes (BOMs, HTML fragments, error banners) prepended before the
+            first XML prolog or root tag.
+          * Control characters outside the XML 1.0 permitted range embedded
+            in CDATA or text nodes.
+
+        We strip everything before the first recognised XML entry point and
+        drop codepoints that XML 1.0 forbids. The goal is best-effort
+        recovery — the caller treats a second ParseError as terminal.
+        """
+        if not isinstance(xml_text, str):
+            return ""
+        trimmed = xml_text.lstrip("\ufeff\r\n\t ")
+        for marker in ("<?xml", "<rss", "<feed"):
+            idx = trimmed.find(marker)
+            if idx >= 0:
+                trimmed = trimmed[idx:]
+                break
+        # XML 1.0 valid codepoints: 0x09, 0x0A, 0x0D, 0x20-0xD7FF,
+        # 0xE000-0xFFFD, 0x10000-0x10FFFF. Anything else (most commonly NULs
+        # and vertical tabs) is stripped silently.
+        allowed: list[str] = []
+        for ch in trimmed:
+            cp = ord(ch)
+            if (
+                cp == 0x09
+                or cp == 0x0A
+                or cp == 0x0D
+                or 0x20 <= cp <= 0xD7FF
+                or 0xE000 <= cp <= 0xFFFD
+                or 0x10000 <= cp <= 0x10FFFF
+            ):
+                allowed.append(ch)
+        return "".join(allowed)
+
     def _parse_feed_entries(self, xml_text: str) -> list[dict[str, str | None]]:
-        root = ET.fromstring(xml_text)
+        # Some publishers (observed with MEED and Reed) emit RSS with garbage
+        # bytes before the XML prolog or with control characters outside the
+        # XML 1.0 permitted set. Try a strict parse first, fall back to a
+        # cleaned retry. A second failure propagates and is caught at the
+        # source-level boundary in collect_candidates.
+        try:
+            root = ET.fromstring(xml_text)
+        except ET.ParseError as exc:
+            logger.info(
+                "XML parse failed on first attempt (%s); retrying with cleaned input.",
+                exc,
+            )
+            cleaned = self._clean_xml_for_parse(xml_text)
+            try:
+                root = ET.fromstring(cleaned)
+            except ET.ParseError as retry_exc:
+                logger.warning(
+                    "Feed XML unparseable even after cleanup: %s", retry_exc
+                )
+                raise
+            self._last_parse_status = "fallback_success"
         if self._local_name(root.tag) == "rss" or root.find("./channel") is not None:
             nodes = root.findall(".//item")
         else:

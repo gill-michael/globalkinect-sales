@@ -1,0 +1,29 @@
+{
+  "lead": {
+    "rank": 10,
+    "score": 84,
+    "source": "R2",
+    "full_name": "Sonam Lama",
+    "role": "Group human resources director",
+    "company": "Legend holding group",
+    "website": "legendholding.com",
+    "professional_email": "sonam.lama@legendholding.com",
+    "personal_email": "",
+    "best_email": "sonam.lama@legendholding.com",
+    "email_type": "professional",
+    "linkedin_url": "https://linkedin.com/in/ACoAAAXj_f4BoSOuFdg62jweeejDqTdEwjDRxw8",
+    "prospect_country": "united arab emirates"
+  },
+  "slug": "legend-holding-group",
+  "processed_at": "2026-04-18T14:02:05+00:00",
+  "status": {
+    "lead": "Sonam Lama",
+    "company": "Legend holding group",
+    "slug": "legend-holding-group",
+    "report_generated": false,
+    "email_generated": false,
+    "skipped_research": true,
+    "skipped_email": true,
+    "errors": []
+  }
+}
