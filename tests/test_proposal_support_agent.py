@@ -17,14 +17,18 @@ def test_create_deal_support_packages_with_solution_returns_one_package_per_reco
             recommended_angle="Lead with payroll compliance, local processing confidence, and GCC execution support.",
         ),
         Lead(
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            contact_role="Managing Director",
+            # Was a recruitment_partner; channel discontinued
+            # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). Replaced
+            # with an HRIS lead so the test still exercises a different
+            # bundle and motion.
+            company_name="Atlas People Ops",
+            contact_name="Helen Price",
+            contact_role="People Director",
             target_country="United Arab Emirates",
-            lead_type="recruitment_partner",
+            lead_type="hris",
             score=8,
             priority="high",
-            recommended_angle="Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+            recommended_angle="Lead with stronger HRIS control, employee visibility, and operational consistency across markets.",
         ),
     ]
     solution_recommendations = [
@@ -41,16 +45,16 @@ def test_create_deal_support_packages_with_solution_returns_one_package_per_reco
             rationale="The current fit is payroll-led with stronger control.",
         ),
         SolutionRecommendation(
-            lead_reference="Nile Talent Partners|Layla Fawzi|the UAE|recruitment_partner",
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
+            lead_reference="Atlas People Ops|Helen Price|the UAE|hris",
+            company_name="Atlas People Ops",
+            contact_name="Helen Price",
             target_country="United Arab Emirates",
-            sales_motion="recruitment_partner",
-            recommended_modules=["EOR", "Payroll"],
-            primary_module="EOR",
-            bundle_label="EOR + Payroll",
-            commercial_strategy="Lead with a partner-ready EOR + Payroll offer that lets the recruiter place talent into the UAE without taking on employer or payroll complexity.",
-            rationale="The current fit is a partner-led bundle.",
+            sales_motion="direct_client",
+            recommended_modules=["Payroll", "HRIS"],
+            primary_module="HRIS",
+            bundle_label="Payroll + HRIS",
+            commercial_strategy="Position a payroll-led platform entry point for the UAE with added operational visibility and control.",
+            rationale="The wider fit is HRIS-led with operational visibility.",
         ),
     ]
     pipeline_records = [
@@ -67,10 +71,10 @@ def test_create_deal_support_packages_with_solution_returns_one_package_per_reco
             next_action="book_discovery_call",
         ),
         PipelineRecord(
-            lead_reference="Nile Talent Partners|Layla Fawzi|the UAE|recruitment_partner",
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            lead_type="recruitment_partner",
+            lead_reference="Atlas People Ops|Helen Price|the UAE|hris",
+            company_name="Atlas People Ops",
+            contact_name="Helen Price",
+            lead_type="hris",
             target_country="United Arab Emirates",
             score=8,
             priority="high",
@@ -112,14 +116,19 @@ def test_deal_support_uses_bundle_label_over_lead_type_and_preserves_reference()
             recommended_angle="Lead with payroll compliance, local processing confidence, and GCC execution support.",
         ),
         Lead(
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            contact_role="Managing Director",
+            # Was a recruitment_partner; channel discontinued
+            # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). Replaced
+            # with a direct_eor lead which still gives a different bundle
+            # from the direct_payroll above so the assertions below
+            # continue to test bundle-label preservation across types.
+            company_name="ScaleBridge Health",
+            contact_name="Daniel Morris",
+            contact_role="Founder",
             target_country="United Arab Emirates",
-            lead_type="recruitment_partner",
+            lead_type="direct_eor",
             score=9,
             priority="high",
-            recommended_angle="Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+            recommended_angle="Position Global Kinect around hiring into market without waiting for local entity setup.",
         ),
     ]
     solution_recommendations = [
@@ -132,20 +141,20 @@ def test_deal_support_uses_bundle_label_over_lead_type_and_preserves_reference()
             recommended_modules=["EOR", "Payroll", "HRIS"],
             primary_module="EOR",
             bundle_label="Full Platform",
-            commercial_strategy="Position GlobalKinect as a single operating platform for hiring, payroll, and HR control in the UAE.",
+            commercial_strategy="Position Global Kinect as a single operating platform for hiring, payroll, and HR control in the UAE.",
             rationale="The wider fit is a unified platform model.",
         ),
         SolutionRecommendation(
-            lead_reference="Nile Talent Partners|Layla Fawzi|the UAE|recruitment_partner",
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
+            lead_reference="ScaleBridge Health|Daniel Morris|the UAE|direct_eor",
+            company_name="ScaleBridge Health",
+            contact_name="Daniel Morris",
             target_country="United Arab Emirates",
-            sales_motion="recruitment_partner",
+            sales_motion="direct_client",
             recommended_modules=["EOR", "Payroll"],
             primary_module="EOR",
             bundle_label="EOR + Payroll",
-            commercial_strategy="Lead with a partner-ready EOR + Payroll offer that lets the recruiter place talent into the UAE without taking on employer or payroll complexity.",
-            rationale="The current fit is a partner-led bundle.",
+            commercial_strategy="Position a fast market-entry bundle for the UAE that combines compliant employment with payroll execution.",
+            rationale="The current fit is an EOR-led bundle.",
         ),
     ]
     pipeline_records = [
@@ -162,10 +171,10 @@ def test_deal_support_uses_bundle_label_over_lead_type_and_preserves_reference()
             next_action="prepare_for_call",
         ),
         PipelineRecord(
-            lead_reference="Nile Talent Partners|Layla Fawzi|the UAE|recruitment_partner",
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            lead_type="recruitment_partner",
+            lead_reference="ScaleBridge Health|Daniel Morris|the UAE|direct_eor",
+            company_name="ScaleBridge Health",
+            contact_name="Daniel Morris",
+            lead_type="direct_eor",
             target_country="United Arab Emirates",
             score=9,
             priority="high",
@@ -189,7 +198,15 @@ def test_deal_support_uses_bundle_label_over_lead_type_and_preserves_reference()
     assert packages[0].recommended_modules == ["EOR", "Payroll", "HRIS"]
     assert "full platform" in packages[0].proposal_summary.lower()
     assert "eor, payroll, hris" in packages[0].proposal_summary.lower()
-    assert "partner-ready eor + payroll offer" in packages[1].call_prep_summary.lower()
-    assert "placements" in packages[1].objection_response.lower() or "partner model" in packages[1].objection_response.lower()
+    # Was an assertion about the recruitment_partner copy ("partner-ready
+    # EOR + Payroll offer"); channel discontinued — the second fixture is
+    # now a direct_eor lead with EOR + Payroll bundle, so we assert the
+    # corresponding direct-client copy instead.
+    assert "eor + payroll" in packages[1].call_prep_summary.lower()
+    assert "fast market-entry" in packages[1].call_prep_summary.lower()
+    assert (
+        "entity" in packages[1].objection_response.lower()
+        or "speed" in packages[1].objection_response.lower()
+    )
     assert packages[0].proposal_summary != packages[1].proposal_summary
     assert packages[0].objection_response != packages[1].objection_response

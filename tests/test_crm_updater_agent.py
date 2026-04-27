@@ -17,14 +17,17 @@ def test_create_pipeline_records_sets_defaults() -> None:
             recommended_angle="Lead with payroll compliance, local processing confidence, and GCC execution support.",
         ),
         Lead(
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            contact_role="Managing Director",
+            # Was a recruitment_partner; channel discontinued
+            # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). Now an
+            # HRIS lead so the test still exercises a different lead_type.
+            company_name="Atlas People Ops",
+            contact_name="Helen Price",
+            contact_role="People Director",
             target_country="United Arab Emirates",
-            lead_type="recruitment_partner",
+            lead_type="hris",
             score=8,
             priority="high",
-            recommended_angle="Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+            recommended_angle="Lead with stronger HRIS control, employee visibility, and operational consistency across markets.",
         ),
     ]
 

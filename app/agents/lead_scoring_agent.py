@@ -80,7 +80,11 @@ class LeadScoringAgent:
         lead_type_scores = {
             "direct_eor": 3,
             "direct_payroll": 3,
-            "recruitment_partner": 3,
+            # recruitment_partner is formally discontinued — see
+            # docs/RECRUITMENT_PARTNER_DISCONTINUATION.md. Scoring it at
+            # 0 keeps such leads from rising up the priority queue even
+            # if they slip through upstream classification.
+            "recruitment_partner": 0,
             "hris": 2,
         }
         return lead_type_scores.get(lead_type or "", 0)
@@ -113,6 +117,11 @@ class LeadScoringAgent:
                 if target_country and market_score(target_country) < 3
                 else "Lead with payroll compliance, local processing confidence, and GCC execution support."
             ),
+            # recruitment_partner is discontinued
+            # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). The
+            # mapping is kept as a safety net so a stray lead with this
+            # type still gets a coherent angle string for operator
+            # context, but no outreach is drafted for it downstream.
             "recruitment_partner": "Position Global Kinect as the employment and payroll partner behind recruiter-led placements.",
             "hris": "Lead with stronger HRIS control, employee visibility, and operational consistency across markets.",
         }

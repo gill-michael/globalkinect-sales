@@ -14,12 +14,15 @@ def test_generate_messages_legacy_method_still_returns_one_output_per_lead() -> 
             recommended_angle="Position GlobalKinect as the fastest compliant EOR entry path for market expansion.",
         ),
         Lead(
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            contact_role="Managing Director",
-            target_country="United Arab Emirates",
-            lead_type="recruitment_partner",
-            recommended_angle="Position GlobalKinect as the execution partner for employing and paying placed talent compliantly.",
+            # Was a recruitment_partner; the channel is discontinued
+            # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md) so the
+            # fixture now uses a direct_payroll lead instead.
+            company_name="ScaleBridge Health",
+            contact_name="Daniel Morris",
+            contact_role="Founder",
+            target_country="Saudi Arabia",
+            lead_type="direct_payroll",
+            recommended_angle="Lead with payroll compliance, local processing confidence, and GCC execution support.",
         ),
     ]
 

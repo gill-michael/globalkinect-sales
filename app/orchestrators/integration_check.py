@@ -208,15 +208,19 @@ class IntegrationCheckRunner:
                 fit_reason="Deterministic integration validation lead for payroll flow.",
             ),
             Lead(
-                company_name=f"{safe_marker}_Global Kinect_Partner_Example",
+                # Was lead_type="recruitment_partner"; channel discontinued
+                # (see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). Now a
+                # direct_eor lead so the integration check still exercises
+                # two distinct lead-type paths through the pipeline.
+                company_name=f"{safe_marker}_Global Kinect_EOR_Example",
                 contact_name="Integration Omar",
                 contact_role="Managing Director",
                 email="integration-omar@example.com",
                 linkedin_url="https://www.linkedin.com/in/integration-omar",
                 company_country="Germany",
                 target_country="United Arab Emirates",
-                lead_type="recruitment_partner",
-                fit_reason="Deterministic integration validation lead for partner flow.",
+                lead_type="direct_eor",
+                fit_reason="Deterministic integration validation lead for EOR flow.",
             ),
         ]
 

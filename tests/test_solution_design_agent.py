@@ -13,17 +13,17 @@ def test_create_solution_recommendations_returns_one_per_pair() -> None:
             lead_type="direct_eor",
             score=10,
             priority="high",
-            recommended_angle="Position GlobalKinect around hiring into market without waiting for local entity setup.",
+            recommended_angle="Position Global Kinect around hiring into market without waiting for local entity setup.",
         ),
         Lead(
-            company_name="Nile Talent Partners",
-            contact_name="Layla Fawzi",
-            contact_role="Managing Director",
+            company_name="ScaleBridge Health",
+            contact_name="Daniel Morris",
+            contact_role="Founder",
             target_country="Saudi Arabia",
-            lead_type="recruitment_partner",
+            lead_type="direct_payroll",
             score=8,
             priority="high",
-            recommended_angle="Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+            recommended_angle="Lead with payroll compliance, local processing confidence, and GCC execution support.",
         ),
     ]
 
@@ -40,17 +40,69 @@ def test_create_solution_recommendations_returns_one_per_pair() -> None:
         assert recommendation.commercial_strategy
         assert recommendation.rationale
     assert recommendations[0].lead_reference == "Desert Peak Technologies|Amira Hassan|the UAE|direct_eor"
-    assert recommendations[1].lead_reference == "Nile Talent Partners|Layla Fawzi|Saudi Arabia|recruitment_partner"
+    assert recommendations[1].lead_reference == "ScaleBridge Health|Daniel Morris|Saudi Arabia|direct_payroll"
+
+
+def test_create_solution_recommendations_skips_recruitment_partner_leads() -> None:
+    """Canonical assertion of the channel-discontinuation behaviour.
+
+    The recruitment_partner channel is formally discontinued (operator
+    decision, see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md). The
+    operational entry point — `create_solution_recommendations` — is
+    expected to skip such leads with a warning log line, leaving them
+    out of the returned recommendations list. Other production agents
+    rely on the 1:1 zip between scored leads and recommendations, so
+    this skip is the authoritative cutoff.
+    """
+    leads = [
+        Lead(
+            company_name="Direct Payroll Co",
+            contact_name="Sara Khan",
+            contact_role="Head of People",
+            target_country="United Arab Emirates",
+            lead_type="direct_payroll",
+        ),
+        Lead(
+            company_name="Discontinued Channel Co",
+            contact_name="Layla Fawzi",
+            contact_role="Managing Director",
+            target_country="Saudi Arabia",
+            lead_type="recruitment_partner",
+        ),
+        Lead(
+            company_name="HRIS Co",
+            contact_name="Helen Price",
+            contact_role="People Director",
+            target_country="Egypt",
+            lead_type="hris",
+        ),
+    ]
+
+    agent = SolutionDesignAgent()
+    recommendations = agent.create_solution_recommendations(leads)
+
+    assert len(recommendations) == 2
+    lead_types_in_output = {
+        rec.lead_reference.split("|")[-1] for rec in recommendations
+    }
+    assert "recruitment_partner" not in lead_types_in_output
+    assert lead_types_in_output == {"direct_payroll", "hris"}
 
 
 def test_recruitment_partner_maps_to_partner_motion_and_bundle() -> None:
+    """Building-block coverage. The `recruitment_partner` channel is
+    discontinued at the operational layer (see the skip test above and
+    docs/RECRUITMENT_PARTNER_DISCONTINUATION.md), but the low-level
+    `create_solution_recommendation` (singular) still maps the lead-type
+    to its motion + bundle correctly. Kept so the mapping logic stays
+    covered if the channel is ever reactivated."""
     lead = Lead(
         company_name="Nile Talent Partners",
         contact_name="Layla Fawzi",
         contact_role="Managing Director",
         target_country="Saudi Arabia",
         lead_type="recruitment_partner",
-        recommended_angle="Position GlobalKinect as the employment and payroll partner behind recruiter-led placements.",
+        recommended_angle="Position Global Kinect as the employment and payroll partner behind recruiter-led placements.",
     )
     pipeline_record = PipelineRecord(
         lead_reference="Nile Talent Partners|Layla Fawzi|Saudi Arabia|recruitment_partner",
