@@ -141,6 +141,65 @@ def test_sync_queue_decisions_marks_hold_and_sets_operator_hold() -> None:
     assert "Hold in Outreach Queue" in updated_record.notes
 
 
+def test_sync_queue_decisions_marks_replied_and_sets_response_metadata() -> None:
+    lead_reference = "Guidepoint|Unknown Contact|the UAE|direct_payroll"
+    record = _build_pipeline_record(
+        lead_reference=lead_reference,
+        stage="contacted",
+        outreach_status="sent",
+        next_action="wait_for_reply",
+    )
+    notion_service = FakeNotionService(
+        [LeadFeedbackSignal(lead_reference=lead_reference, queue_status="Replied")]
+    )
+    supabase_service = FakeSupabaseService({lead_reference: record})
+    agent = OutreachReviewAgent(
+        notion_service=notion_service,
+        supabase_service=supabase_service,
+    )
+
+    result = agent.sync_queue_decisions(limit=10)
+
+    assert result.reviewed_count == 1
+    assert result.replied_count == 1
+    assert result.skipped_count == 0
+    updated_record = supabase_service.updated_records[0]
+    assert updated_record.outreach_status == "replied"
+    assert updated_record.next_action == "review_and_send_reply"
+    assert updated_record.last_response_at is not None
+    assert updated_record.last_contacted is not None
+    assert notion_service.upserted_pipeline_records[0].outreach_status == "replied"
+
+
+def test_sync_queue_decisions_skips_replied_when_pipeline_already_replied() -> None:
+    """Idempotent re-run safety: if ResponseHandlerAgent or a previous
+    OutreachReviewAgent run already set outreach_status='replied', a second
+    'replied' queue status produces a skip rather than a duplicate write."""
+    lead_reference = "Guidepoint|Unknown Contact|the UAE|direct_payroll"
+    record = _build_pipeline_record(
+        lead_reference=lead_reference,
+        stage="contacted",
+        outreach_status="replied",
+        next_action="review_and_send_reply",
+    )
+    notion_service = FakeNotionService(
+        [LeadFeedbackSignal(lead_reference=lead_reference, queue_status="Replied")]
+    )
+    supabase_service = FakeSupabaseService({lead_reference: record})
+    agent = OutreachReviewAgent(
+        notion_service=notion_service,
+        supabase_service=supabase_service,
+    )
+
+    result = agent.sync_queue_decisions(limit=10)
+
+    assert result.reviewed_count == 1
+    assert result.replied_count == 0
+    assert result.skipped_count == 1
+    assert not supabase_service.updated_records
+    assert not notion_service.upserted_pipeline_records
+
+
 def test_sync_queue_decisions_skips_stale_queue_status_when_pipeline_is_further_along() -> None:
     lead_reference = "Guidepoint|Unknown Contact|the UAE|direct_payroll"
     record = _build_pipeline_record(

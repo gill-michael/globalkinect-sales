@@ -6,7 +6,7 @@ from app.models.platform_terms import BundleLabel, PlatformModule, SalesMotion
 from app.utils.time import utc_now_iso
 
 PipelineStage = Literal["new", "contacted", "replied", "call_booked", "proposal", "closed"]
-OutreachStatus = Literal["not_started", "drafted", "approved", "sent"]
+OutreachStatus = Literal["not_started", "drafted", "approved", "sent", "replied"]
 
 
 class PipelineRecord(BaseModel):

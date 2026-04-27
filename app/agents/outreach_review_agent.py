@@ -17,19 +17,21 @@ class OutreachReviewSyncResult:
     approved_count: int = 0
     sent_count: int = 0
     hold_count: int = 0
+    replied_count: int = 0
     skipped_count: int = 0
     failed_count: int = 0
 
     def summary(self) -> str:
         return (
             f"reviewed={self.reviewed_count}, approved={self.approved_count}, "
-            f"sent={self.sent_count}, hold={self.hold_count}, skipped={self.skipped_count}, "
+            f"sent={self.sent_count}, hold={self.hold_count}, "
+            f"replied={self.replied_count}, skipped={self.skipped_count}, "
             f"failed={self.failed_count}"
         )
 
 
 class OutreachReviewAgent:
-    ACTIONABLE_QUEUE_STATUSES = {"approved", "sent", "hold"}
+    ACTIONABLE_QUEUE_STATUSES = {"approved", "sent", "hold", "replied"}
     POST_OUTREACH_STAGES = {"contacted", "replied", "callbooked", "proposal", "closed"}
 
     def __init__(
@@ -95,6 +97,8 @@ class OutreachReviewAgent:
                 result.sent_count += 1
             elif updated == "hold":
                 result.hold_count += 1
+            elif updated == "replied":
+                result.replied_count += 1
             else:
                 result.skipped_count += 1
 
@@ -149,6 +153,21 @@ class OutreachReviewAgent:
             self._persist_pipeline_record(updated_record)
             return "hold"
 
+        if normalized_status == "replied":
+            # ResponseHandlerAgent runs later in the cycle and may also update
+            # this record (with a more nuanced stage based on classification).
+            # We only flip outreach_status + last_response_at here; the order
+            # is irrelevant because both writes are idempotent on outreach_status
+            # and ResponseHandlerAgent does its own stage logic.
+            if self._should_skip_replied(record):
+                return "skipped"
+            updated_record = self.crm_updater_agent.update_outreach_status(
+                record,
+                "replied",
+            )
+            self._persist_pipeline_record(updated_record)
+            return "replied"
+
         return "skipped"
 
     def _persist_pipeline_record(self, record: PipelineRecord) -> None:
@@ -180,6 +199,17 @@ class OutreachReviewAgent:
             normalized_outreach_status == "sent"
             or normalized_stage in self.POST_OUTREACH_STAGES
             or normalized_next_action == "operatorhold"
+        )
+
+    def _should_skip_replied(self, record: PipelineRecord) -> bool:
+        # Skip when the pipeline already reflects a reply (so re-running on
+        # the same queue row, or running after ResponseHandlerAgent, is a
+        # no-op) or when the deal has already been closed downstream.
+        normalized_outreach_status = self._normalized_status(record.outreach_status)
+        normalized_stage = self._normalized_status(record.stage)
+        return (
+            normalized_outreach_status == "replied"
+            or normalized_stage == "closed"
         )
 
     def _normalized_status(self, value: str | None) -> str:

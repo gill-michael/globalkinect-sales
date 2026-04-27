@@ -135,6 +135,9 @@ class CRMUpdaterAgent:
         if new_status == "sent":
             update_payload["last_outreach_at"] = updated_at
             update_payload["last_contacted"] = updated_at
+        if new_status == "replied":
+            update_payload["last_response_at"] = updated_at
+            update_payload["last_contacted"] = updated_at
         return record.model_copy(update=update_payload)
 
     def set_next_action(self, record: PipelineRecord, action: str) -> PipelineRecord:
@@ -179,6 +182,7 @@ class CRMUpdaterAgent:
             "drafted": "review_and_send_message",
             "approved": "send_message",
             "sent": "wait_for_reply",
+            "replied": "review_and_send_reply",
         }
         return actions[outreach_status]
 
