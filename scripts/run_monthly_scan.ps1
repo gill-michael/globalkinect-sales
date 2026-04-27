@@ -21,7 +21,7 @@ Write-Host "Monthly scan finished at $(Get-Date -Format o)"
 
 # To schedule this in Windows Task Scheduler to run on the 1st of every month at 07:00:
 #
-# schtasks /create /tn "GlobalKinect Monthly Scan" /tr "powershell -File C:\dev\globalkinect\sales\scripts\run_monthly_scan.ps1" /sc monthly /d 1 /st 07:00
+# schtasks /create /tn "Global Kinect Monthly Scan" /tr "powershell -File C:\dev\globalkinect\sales\scripts\run_monthly_scan.ps1" /sc monthly /d 1 /st 07:00
 #
-# Verify with:   schtasks /query /tn "GlobalKinect Monthly Scan"
-# Remove with:   schtasks /delete /tn "GlobalKinect Monthly Scan" /f
+# Verify with:   schtasks /query /tn "Global Kinect Monthly Scan"
+# Remove with:   schtasks /delete /tn "Global Kinect Monthly Scan" /f

@@ -151,7 +151,7 @@ class OperatorConsoleApp:
             self._warning_banner()
             + self._flash_banner(flash)
             + "<section class='hero'>"
-            "<div><p class='eyebrow'>GlobalKinect Sales Engine</p>"
+            "<div><p class='eyebrow'>Global Kinect Sales Engine</p>"
             "<h1>Daily operator console</h1>"
             "<p class='hero-copy'>Review live discovery, intake, queue decisions, and run health from one local control surface.</p>"
             "<div class='hero-actions'>"
@@ -594,7 +594,7 @@ class OperatorConsoleApp:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{escape(title)} | GlobalKinect Sales Console</title>
+  <title>{escape(title)} | Global Kinect Sales Console</title>
   <style>
     :root {{
       --bg: #f4efe3;
@@ -947,7 +947,7 @@ class OperatorConsoleApp:
   <div class="shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <div class="brand">GlobalKinect Operator Console</div>
+        <div class="brand">Global Kinect Operator Console</div>
         <div class="brand-note">Decision-first workspace for discovery, outreach, and run monitoring.</div>
       </div>
       <nav class="nav">{nav_html}</nav>

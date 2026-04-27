@@ -375,6 +375,9 @@ class OpportunitiesOutreachAgent:
         combined_lower = " ".join([linkedin_message, email_subject, email_body]).lower()
 
         if "globalkinect" in combined_lower:
+            # Diagnostic message intentionally retains the one-word form so
+            # operators can see exactly what shape was rejected. The string is
+            # error metadata, not customer-facing copy.
             return False, "contains one-word 'GlobalKinect'"
 
         for phrase in BANNED_PHRASES:

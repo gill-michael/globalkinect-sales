@@ -197,7 +197,7 @@ class IntegrationCheckRunner:
         safe_marker = self.normalize_run_marker(run_marker)
         return [
             Lead(
-                company_name=f"{safe_marker}_GlobalKinect_Payroll_Example",
+                company_name=f"{safe_marker}_Global Kinect_Payroll_Example",
                 contact_name="Integration Jane",
                 contact_role="Head of People",
                 email="integration-jane@example.com",
@@ -208,7 +208,7 @@ class IntegrationCheckRunner:
                 fit_reason="Deterministic integration validation lead for payroll flow.",
             ),
             Lead(
-                company_name=f"{safe_marker}_GlobalKinect_Partner_Example",
+                company_name=f"{safe_marker}_Global Kinect_Partner_Example",
                 contact_name="Integration Omar",
                 contact_role="Managing Director",
                 email="integration-omar@example.com",

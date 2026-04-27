@@ -216,6 +216,10 @@ class DiscoverySourceService:
             follow_redirects=True,
             timeout=20.0,
             headers={
+                # Intentionally one word: HTTP product tokens (RFC 7231) cannot
+                # contain spaces. The brand rule "Global Kinect" (two words)
+                # applies to copy in client-facing drafts, not to identifiers
+                # on the wire.
                 "User-Agent": "GlobalKinectSalesEngine/1.0",
             },
         )

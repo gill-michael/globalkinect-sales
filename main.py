@@ -582,7 +582,7 @@ def generate_opportunities_outreach(limit: int, icp_filter: str | None) -> int:
 def _parse_cli_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="globalkinect-sales",
-        description="GlobalKinect sales engine entry point.",
+        description="Global Kinect sales engine entry point.",
     )
     parser.add_argument(
         "--generate-outreach",
