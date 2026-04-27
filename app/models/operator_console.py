@@ -20,6 +20,7 @@ class OutreachQueueRecord(BaseModel):
     email_message: str | None = None
     linkedin_message: str | None = None
     follow_up_message: str | None = None
+    reply: str | None = None
     status: str | None = None
     generated_at: str | None = None
     run_marker: str | None = None

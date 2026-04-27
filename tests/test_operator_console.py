@@ -123,6 +123,62 @@ def test_queue_page_filters_by_status_and_search_query() -> None:
     assert "North Star Labs" not in html
 
 
+def test_queue_card_renders_reply_field_when_present() -> None:
+    """When the Reply property is populated on the queue record, the
+    rendered card includes a 'Prospect reply' details block with the text.
+    Operators shouldn't have to leave the Console to read the reply."""
+
+    class ReplyService(FakeOperatorConsoleService):
+        def list_outreach_queue_records(self, limit: int = 100):
+            return [
+                OutreachQueueRecord(
+                    page_id="q-replied",
+                    lead_reference="Acme Corp|Sara Khan|UAE|direct_eor",
+                    company_name="Acme Corp",
+                    contact_name="Sara Khan",
+                    status="Replied",
+                    email_subject="UAE EOR support",
+                    reply="Thanks — interested. Can we book a call next week?",
+                ),
+            ]
+
+    app = OperatorConsoleApp(service=ReplyService())
+    status, body, _headers = _run_app(
+        app,
+        {
+            "REQUEST_METHOD": "GET",
+            "PATH_INFO": "/queue",
+            "QUERY_STRING": "",
+            "wsgi.input": BytesIO(b""),
+        },
+    )
+
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    assert "Prospect reply" in html
+    assert "Thanks — interested. Can we book a call next week?" in html
+
+
+def test_queue_card_omits_reply_block_when_empty() -> None:
+    """A record with no reply set should not render an empty 'Prospect reply'
+    block — _details_block returns an empty string for falsy input."""
+    app = OperatorConsoleApp(service=FakeOperatorConsoleService())
+    status, body, _headers = _run_app(
+        app,
+        {
+            "REQUEST_METHOD": "GET",
+            "PATH_INFO": "/queue",
+            "QUERY_STRING": "",
+            "wsgi.input": BytesIO(b""),
+        },
+    )
+
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    # The default fixture has no replies set, so the heading should be absent.
+    assert "Prospect reply" not in html
+
+
 def test_queue_status_post_updates_service_and_redirects() -> None:
     service = FakeOperatorConsoleService()
     app = OperatorConsoleApp(service=service)

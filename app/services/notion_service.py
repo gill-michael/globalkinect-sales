@@ -1503,6 +1503,7 @@ class NotionService:
             email_message=self._property_text(page, "Email Message"),
             linkedin_message=self._property_text(page, "LinkedIn Message"),
             follow_up_message=self._property_text(page, "Follow-Up Message"),
+            reply=self._property_text(page, "Reply"),
             status=self._property_option(page, "Status"),
             generated_at=self._property_date(page, "Generated At"),
             run_marker=self._property_text(page, "Run Marker"),

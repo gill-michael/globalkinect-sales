@@ -1119,6 +1119,7 @@ class OperatorConsoleApp:
             "</div>"
             f"{self._meta_badges([record.priority, record.target_country, record.sales_motion, record.primary_module, record.bundle_label])}"
             f"{self._pair_grid([('Lead Reference', record.lead_reference), ('Role', record.contact_role), ('Run Marker', record.run_marker), ('Generated At', record.generated_at)])}"
+            f"{self._details_block('Prospect reply', record.reply)}"
             f"{self._text_block('Email Subject', record.email_subject)}"
             f"{self._details_block('Email Message', record.email_message)}"
             f"{self._details_block('LinkedIn Message', record.linkedin_message)}"
