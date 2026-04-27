@@ -26,9 +26,10 @@ def _build_clean_leads() -> list[Lead]:
     """Spread inputs across lead_type / target_country / role so the
     generators exercise their full template tables.
 
-    `recruitment_partner` is intentionally excluded — `SolutionDesignAgent`
-    skips that channel (it's discontinued), which would break the
-    1:1 zip between scored_leads and recommendations downstream.
+    `recruitment_partner` is excluded because the channel is formally
+    discontinued — see docs/RECRUITMENT_PARTNER_DISCONTINUATION.md.
+    Including it here would just produce a logged-and-skipped lead
+    that contributes nothing to brand-rule coverage.
     """
     return [
         Lead(
