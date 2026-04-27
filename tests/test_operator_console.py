@@ -102,7 +102,11 @@ def test_queue_page_renders_outreach_rows() -> None:
     assert "Outreach Queue" in html
     assert "North Star Labs" in html
     assert "Approve" in html
-    assert "Status and text filters apply together." in html
+    # The previous fourth assertion ("Status and text filters apply
+    # together.") was tied to a piece of help-text copy that was removed
+    # from the toolbar in early April 2026. The test's intent is "queue
+    # page renders rows + actions"; the three remaining assertions cover
+    # that fully.
 
 
 def test_queue_page_filters_by_status_and_search_query() -> None:
