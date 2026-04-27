@@ -186,8 +186,11 @@ COUNTRY_CODE_TO_NAME: dict[str, str] = {
 EXPLORIUM_BASE_URL_DEFAULT = "https://api.explorium.ai/v1"
 BUSINESSES_PATH = "/businesses"
 PROSPECTS_PATH = "/prospects"
+ENRICH_PATH = "/prospects/contacts_information/bulk_enrich"
 MAX_PAGE_SIZE = 100   # docs allow up to 500 but recommend 100 for stability
 MAX_BUSINESS_IDS = 2000  # cap on how many business_ids we forward to /prospects
+ENRICH_BATCH_SIZE = 50  # Explorium documented hard cap on bulk_enrich
+CREDITS_PER_PROSPECT_EMAIL_ONLY = 2  # documented cost for contact_types=["email"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -199,6 +202,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--icp", required=True, choices=sorted(ICP_FILTERS))
     parser.add_argument("--limit", type=int, default=200)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--skip-enrichment",
+        action="store_true",
+        help="Skip the bulk_enrich step. Useful for testing without burning "
+             "Explorium credits. Default is enrichment ON.",
+    )
     return parser.parse_args()
 
 
@@ -359,6 +368,117 @@ def fetch_prospects(
     return results[:limit], meta
 
 
+class EnrichmentResult:
+    """Outcome of a bulk_enrich pass over a list of prospect_ids.
+
+    `emails` is a dict keyed on every input prospect_id whose value is the
+    plaintext email Explorium returned (or None if the prospect was returned
+    in a successful batch but no email was found, OR if the prospect's batch
+    failed entirely — distinguish via `prospect_ids_in_failed_batches`).
+    """
+
+    def __init__(self, all_prospect_ids: list[str]) -> None:
+        self.emails: dict[str, str | None] = {pid: None for pid in all_prospect_ids}
+        self.succeeded_count: int = 0
+        self.failed_count: int = 0
+        self.credits_consumed: int = 0
+        self.prospect_ids_in_failed_batches: set[str] = set()
+
+
+def _chunked(items: list[Any], size: int):
+    for start in range(0, len(items), size):
+        yield items[start : start + size]
+
+
+def _extract_email_from_enriched_record(record: dict[str, Any]) -> str | None:
+    """Pick the best plaintext email from a bulk_enrich `data[i]` entry.
+    Prefers `professions_email` (the canonical professional address), falls
+    back to the first non-empty `emails[].address`."""
+    inner = record.get("data") or {}
+    if not isinstance(inner, dict):
+        return None
+    primary = inner.get("professions_email")
+    if isinstance(primary, str) and primary.strip():
+        return primary.strip()
+    emails = inner.get("emails") or []
+    if isinstance(emails, list):
+        for email_obj in emails:
+            if not isinstance(email_obj, dict):
+                continue
+            address = email_obj.get("address")
+            if isinstance(address, str) and address.strip():
+                return address.strip()
+    return None
+
+
+def enrich_prospect_emails(
+    client: httpx.Client,
+    api_key: str,
+    base_url: str,
+    prospect_ids: list[str],
+) -> EnrichmentResult:
+    """Call /v1/prospects/contacts_information/bulk_enrich for every
+    prospect_id, batched at ENRICH_BATCH_SIZE.
+
+    Tolerates partial failures: a single bad batch logs a warning but does
+    not abort the whole run. Returns an EnrichmentResult with a per-id
+    plaintext-email map plus aggregate counters.
+
+    Cost is approximated at `CREDITS_PER_PROSPECT_EMAIL_ONLY` per prospect
+    in successfully-completed batches. The Explorium API does not currently
+    surface credit info on responses, so this is a documented-rate estimate.
+    """
+    result = EnrichmentResult(prospect_ids)
+    if not prospect_ids:
+        return result
+
+    for batch in _chunked(prospect_ids, ENRICH_BATCH_SIZE):
+        body = {
+            "prospect_ids": batch,
+            "parameters": {"contact_types": ["email"]},
+        }
+        try:
+            payload = explorium_post(client, api_key, base_url, ENRICH_PATH, body)
+        except Exception as exc:
+            logger.warning(
+                "bulk_enrich batch of %s failed: %s. Continuing with the rest.",
+                len(batch),
+                exc,
+            )
+            result.failed_count += len(batch)
+            result.prospect_ids_in_failed_batches.update(batch)
+            continue
+
+        data = payload.get("data") or []
+        for entry in data:
+            if not isinstance(entry, dict):
+                continue
+            pid = entry.get("prospect_id")
+            email = _extract_email_from_enriched_record(entry)
+            if pid:
+                result.emails[pid] = email
+                if email:
+                    result.succeeded_count += 1
+        result.credits_consumed += len(batch) * CREDITS_PER_PROSPECT_EMAIL_ONLY
+        logger.info(
+            "bulk_enrich batch complete: %s ids → %s emails resolved (running "
+            "credits=%s)",
+            len(batch),
+            sum(1 for pid in batch if result.emails.get(pid)),
+            result.credits_consumed,
+        )
+
+    logger.info(
+        "bulk_enrich pass finished: %s/%s prospects with plaintext emails, "
+        "%s in failed batches, ~%s credits consumed.",
+        result.succeeded_count,
+        len(prospect_ids),
+        result.failed_count,
+        result.credits_consumed,
+    )
+    return result
+
+
 def first(*values: Any) -> Any:
     for v in values:
         if v not in (None, "", [], {}):
@@ -422,6 +542,10 @@ def compose_notes(normalised: dict[str, Any]) -> str:
         lines.append(f"prospect_id: {normalised['prospect_id']}")
     if normalised.get("email_hashed") and not normalised.get("email_plain"):
         lines.append(f"professional_email_hashed: {normalised['email_hashed']}")
+    if normalised.get("enrichment_credits"):
+        lines.append(f"enrichment_credits: {normalised['enrichment_credits']}")
+    if normalised.get("enrichment_failed"):
+        lines.append("enrichment_failed: true")
     for key, value in raw.items():
         if key in reserved or value in (None, "", [], {}):
             continue
@@ -564,6 +688,25 @@ def run_scan(args: argparse.Namespace) -> int:
             limit=args.limit,
         )
 
+        # Step 3: bulk_enrich for plaintext emails. Skipped in dry-run and
+        # when --skip-enrichment is set.
+        enrichment: EnrichmentResult | None = None
+        if results and not args.dry_run and not args.skip_enrichment:
+            prospect_ids_to_enrich = [
+                p.get("prospect_id") for p in results if p.get("prospect_id")
+            ]
+            if prospect_ids_to_enrich:
+                logger.info(
+                    "Enriching %s prospect emails via bulk_enrich.",
+                    len(prospect_ids_to_enrich),
+                )
+                enrichment = enrich_prospect_emails(
+                    client,
+                    api_key=api_key,
+                    base_url=base_url,
+                    prospect_ids=prospect_ids_to_enrich,
+                )
+
     logger.info("Explorium returned %s prospect results", len(results))
 
     existing_emails: set[str] = set()
@@ -574,12 +717,32 @@ def run_scan(args: argparse.Namespace) -> int:
     written = 0
     skipped_empty = 0
     skipped_duplicate = 0
+    enriched_with_email = 0
+    enrichment_failures = 0
 
     for record in results:
         normalised = normalise_result(record)
         if not (normalised.get("company_name") or normalised.get("contact_name")):
             skipped_empty += 1
             continue
+
+        # Apply enrichment results: prefer the bulk_enrich plaintext email,
+        # fall back to whatever /v1/prospects returned. If the prospect was
+        # in a failed batch, mark the row so operators can see it in Notes.
+        pid = normalised.get("prospect_id")
+        if enrichment is not None and pid:
+            enriched_email = enrichment.emails.get(pid)
+            if enriched_email:
+                normalised["email_plain"] = enriched_email
+                enriched_with_email += 1
+                normalised["enrichment_credits"] = CREDITS_PER_PROSPECT_EMAIL_ONLY
+            elif pid in enrichment.prospect_ids_in_failed_batches:
+                normalised["enrichment_failed"] = True
+                enrichment_failures += 1
+            elif not normalised.get("email_plain"):
+                # Batch succeeded but Explorium had no email on file.
+                # Not strictly a failure — distinct from a batch error.
+                normalised["enrichment_credits"] = CREDITS_PER_PROSPECT_EMAIL_ONLY
 
         email_key = (normalised.get("email_plain") or "").strip().lower()
         pair_key = ""
@@ -630,15 +793,23 @@ def run_scan(args: argparse.Namespace) -> int:
 
     print()
     print("Explorium prospecting scan summary")
-    print(f"  Region:             {args.region}")
-    print(f"  ICP:                {args.icp}")
-    print(f"  Business pre-query: {'yes' if business_filters is not None else 'no'}")
+    print(f"  Region:                  {args.region}")
+    print(f"  ICP:                     {args.icp}")
+    print(f"  Business pre-query:      {'yes' if business_filters is not None else 'no'}")
     if business_ids is not None:
-        print(f"  Matching businesses: {len(business_ids)}")
-    print(f"  Total prospects:    {len(results)}")
-    print(f"  Written to Notion:  {written}{' (dry-run)' if args.dry_run else ''}")
-    print(f"  Skipped (empty):    {skipped_empty}")
-    print(f"  Skipped (dupe):     {skipped_duplicate}")
+        print(f"  Matching businesses:     {len(business_ids)}")
+    print(f"  Total prospects:         {len(results)}")
+    if enrichment is not None:
+        print(f"  Enriched with email:     {enriched_with_email}")
+        print(f"  Enrichment failures:     {enrichment_failures}")
+        print(f"  Enrichment credits (~):  {enrichment.credits_consumed}")
+    elif args.skip_enrichment:
+        print("  Enrichment:              skipped (--skip-enrichment)")
+    elif args.dry_run:
+        print("  Enrichment:              skipped (--dry-run)")
+    print(f"  Written to Notion:       {written}{' (dry-run)' if args.dry_run else ''}")
+    print(f"  Skipped (empty):         {skipped_empty}")
+    print(f"  Skipped (dupe):          {skipped_duplicate}")
     for key, value in meta.items():
         print(f"  {key}: {value}")
     return 0
