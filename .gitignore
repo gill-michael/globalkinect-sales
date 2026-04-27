@@ -1,6 +1,63 @@
+# =====================================================================
+# Python
+# =====================================================================
+.venv/
 venv/
 __pycache__/
 *.pyc
-.env
-.vscode/
+*.pyo
+*.egg-info/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# =====================================================================
+# Node / Vite / TanStack Start (used by leads/leads/ dashboard)
+# =====================================================================
+node_modules/
+.next/
+.parcel-cache/
+.vite/
+
+# =====================================================================
+# Bun
+# =====================================================================
+# bun.lockb is intentionally tracked — it's the canonical lockfile.
+.bun/
+
+# =====================================================================
+# Secrets
+# =====================================================================
+# .env.example IS tracked; everything else with secrets is not.
+.env
+.env.local
+.env.*.local
+
+# =====================================================================
+# IDE / OS
+# =====================================================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# =====================================================================
+# Local lead data — researched leads, drafted emails, phone numbers,
+# LinkedIn URLs. The folder is the canonical SACRED store; nothing inside
+# it ever gets committed. The .gitkeep sentinel keeps the directory
+# alive in fresh clones.
+# =====================================================================
+leads/Reports/*
+!leads/Reports/.gitkeep
+
+# =====================================================================
+# Auto-generated knowledge graph (regenerable from source)
+# =====================================================================
+graphify-out/
+
+# =====================================================================
+# Orphans / one-off artefacts
+# =====================================================================
+.mv_test_cross
