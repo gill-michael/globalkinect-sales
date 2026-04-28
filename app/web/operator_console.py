@@ -50,6 +50,11 @@ class OperatorConsoleApp:
                     start_response,
                     self._render_queue(query),
                 )
+            if method == "GET" and path == "/pipeline":
+                return self._respond_html(
+                    start_response,
+                    self._render_pipeline(query),
+                )
             if method == "POST" and path == "/queue/status":
                 return self._handle_queue_status(start_response, environ)
             if method == "GET" and path == "/runs":
@@ -359,6 +364,64 @@ class OperatorConsoleApp:
         )
         return self._layout("Outreach Queue", "queue", body)
 
+    def _render_pipeline(self, query: dict[str, list[str]]) -> str:
+        """Pipeline cards sourced from the Notion Pipeline DB.
+
+        Read-mostly companion view to the Outreach Queue — surfaces the
+        current outreach_status, priority, and last-touched timestamp
+        per lead so an operator doesn't have to bounce to Notion's UI.
+        Notion does not currently store score on Pipeline rows; priority
+        is the available proxy.
+        """
+        records = self.service.list_pipeline_records(limit=200)
+        requested_status = self._selected_filter(query, "status")
+        requested_search = self._selected_filter(query, "q")
+        filtered = self._apply_dict_filters(
+            records,
+            status_field="outreach_status",
+            selected_status=requested_status,
+            search_text=requested_search,
+            search_fields=(
+                "company_name", "contact_name", "lead_reference",
+                "next_action", "primary_module", "bundle_label",
+                "sales_motion", "lead_type",
+            ),
+        )
+        ordered = sorted(
+            filtered,
+            key=lambda record: (
+                self._priority_rank(record.get("priority")),
+                -self._timestamp_rank(record.get("last_edited_time")),
+                (record.get("company_name") or record.get("lead_reference") or "").lower(),
+            ),
+        )
+        rows = "".join(self._pipeline_card(record) for record in ordered) or (
+            "<p class='muted'>No pipeline records yet.</p>"
+        )
+        status_counts = self._summarize_dict_statuses(records, "outreach_status")
+        body = (
+            self._warning_banner()
+            + self._flash_banner(self._flash_message(query))
+            + self._page_header(
+                "Pipeline",
+                "Live pipeline state per lead. Sourced from the Notion Pipeline DB.",
+                len(filtered),
+                len(records),
+            )
+            + self._filter_toolbar(
+                "/pipeline",
+                requested_status,
+                requested_search,
+                status_counts,
+                "Search company, lead reference, motion, or module",
+            )
+            + "<section class='panel'><div class='panel-head'><h2>Pipeline</h2>"
+            "<span class='muted'>Sorted by priority, then most-recent edit. "
+            "Click into Notion for full history.</span></div>"
+            f"<div class='stack'>{rows}</div></section>"
+        )
+        return self._layout("Pipeline", "pipeline", body)
+
     def _render_runs(self, query: dict[str, list[str]]) -> str:
         records = self.service.list_sales_engine_runs(limit=50)
         requested_status = self._selected_filter(query, "status")
@@ -583,6 +646,9 @@ class OperatorConsoleApp:
             ("intake", "/intake", "Intake"),
             ("accounts", "/accounts", "Accounts"),
             ("queue", "/queue", "Outreach Queue"),
+            ("pipeline", "/pipeline", "Pipeline"),
+            ("tasks", "/tasks", "Tasks"),
+            ("deal-support", "/deal-support", "Deal Support"),
             ("runs", "/runs", "Run Monitor"),
         ]
         nav_html = "".join(
@@ -1129,6 +1195,27 @@ class OperatorConsoleApp:
             "</article>"
         )
 
+    def _pipeline_card(self, record: dict) -> str:
+        company = record.get("company_name") or record.get("lead_reference") or "Unknown"
+        contact = record.get("contact_name") or "Unknown contact"
+        page_url = record.get("page_url") or "#"
+        notion_link = (
+            f"<div class='actions'><a class='nav-link' href='{escape(page_url, quote=True)}' "
+            "target='_blank' rel='noreferrer'>Open in Notion</a></div>"
+        ) if page_url and page_url != "#" else ""
+        return (
+            "<article class='row-card'>"
+            "<div class='row-top'>"
+            f"<div class='row-title'><h3>{escape(company)}</h3>"
+            f"<p class='muted'>{escape(contact)}</p></div>"
+            f"{self._status_badge(record.get('outreach_status'))}"
+            "</div>"
+            f"{self._meta_badges([record.get('priority'), record.get('lead_type'), record.get('sales_motion'), record.get('primary_module'), record.get('bundle_label'), record.get('stage')])}"
+            f"{self._pair_grid([('Lead Reference', record.get('lead_reference')), ('Next Action', record.get('next_action')), ('Last Updated', record.get('last_updated') or record.get('last_edited_time'))])}"
+            f"{notion_link}"
+            "</article>"
+        )
+
     def _account_card(self, account: dict) -> str:
         """Render a summary card for an account with aggregated activity."""
         total_activity = account["discovery_count"] + account["intake_count"] + account["queue_count"]
@@ -1313,6 +1400,60 @@ class OperatorConsoleApp:
                     continue
             filtered.append(record)
         return filtered
+
+    def _apply_dict_filters(
+        self,
+        records: list[dict],
+        *,
+        status_field: str,
+        selected_status: str | None,
+        search_text: str | None,
+        search_fields: tuple[str, ...],
+    ) -> list[dict]:
+        """Equivalent of `_apply_record_filters` but for dict-shaped records
+        (used by Pipeline / Tasks / Deal Support views which read records
+        as dicts rather than Pydantic models)."""
+        normalized_status = self._normalize(selected_status)
+        search_terms = [term.lower() for term in (search_text or "").split() if term.strip()]
+        out: list[dict] = []
+        for record in records:
+            if normalized_status and self._normalize(record.get(status_field)) != normalized_status:
+                continue
+            if search_terms:
+                haystack = " ".join(
+                    str(record.get(field) or "").lower() for field in search_fields
+                )
+                if not all(term in haystack for term in search_terms):
+                    continue
+            out.append(record)
+        return out
+
+    def _summarize_dict_statuses(
+        self,
+        records: list[dict],
+        status_field: str,
+    ) -> list[tuple[str, int]]:
+        counts: dict[str, int] = {}
+        labels: dict[str, str] = {}
+        for record in records:
+            label = record.get(status_field) or "Unknown"
+            normalized = self._normalize(label)
+            counts[normalized] = counts.get(normalized, 0) + 1
+            labels.setdefault(normalized, label)
+        return sorted(
+            ((labels[key], count) for key, count in counts.items()),
+            key=lambda item: (-item[1], item[0].lower()),
+        )
+
+    def _timestamp_rank(self, value: str | None) -> int:
+        """Convert an ISO timestamp string to a sortable int. Empty/None
+        sorts last (rank 0). Used as a recency tiebreaker."""
+        if not value:
+            return 0
+        try:
+            return int(value.replace("-", "")[:8].lstrip("0") or "0")
+        except (ValueError, AttributeError):
+            return 0
 
     def _summarize_statuses(self, records: list) -> list[tuple[str, int]]:
         counts: dict[str, int] = {}

@@ -69,6 +69,10 @@ class FakeOperatorConsoleService:
     def list_sales_engine_runs(self, limit: int = 50):
         return self.dashboard_snapshot().run_records
 
+    def list_pipeline_records(self, limit: int = 200) -> list[dict]:
+        # Default fixture returns nothing; subclasses override per test.
+        return []
+
     def update_outreach_queue_status(self, lead_reference: str, status: str) -> None:
         self.updated.append((lead_reference, status))
 
@@ -208,3 +212,145 @@ def test_queue_status_post_updates_service_and_redirects() -> None:
     location_headers = [value for key, value in headers if key == "Location"]
     assert location_headers
     assert location_headers[0].startswith("/queue?")
+
+
+# ---------------------------------------------------------------------------
+# Pipeline view (Task 3a)
+# ---------------------------------------------------------------------------
+
+def _pipeline_record_dict(
+    *,
+    company: str,
+    contact: str,
+    lead_type: str,
+    outreach_status: str,
+    priority: str = "medium",
+    last_edited: str = "2026-04-15T09:00:00Z",
+) -> dict:
+    """Helper that mirrors NotionService.list_pipeline_records output."""
+    lead_reference = f"{company}|{contact}|United Arab Emirates|{lead_type}"
+    pid = f"page-{company.lower().replace(' ', '-')}"
+    return {
+        "page_id": pid,
+        "page_url": f"https://notion.so/{pid.replace('-', '')}",
+        "last_edited_time": last_edited,
+        "lead_reference": lead_reference,
+        "lead_type": lead_type,
+        "company_name": company,
+        "contact_name": contact,
+        "stage": "contacted",
+        "outreach_status": outreach_status,
+        "next_action": "review_and_send_message",
+        "priority": priority,
+        "sales_motion": "direct_client",
+        "primary_module": "EOR",
+        "bundle_label": "EOR + Payroll",
+        "last_updated": "2026-04-15",
+    }
+
+
+class _PipelineFakeService(FakeOperatorConsoleService):
+    def __init__(self, records: list[dict]) -> None:
+        super().__init__()
+        self._records = records
+
+    def list_pipeline_records(self, limit: int = 200) -> list[dict]:
+        return list(self._records[:limit])
+
+
+def test_pipeline_page_renders_pipeline_records() -> None:
+    records = [
+        _pipeline_record_dict(
+            company="Acme Ltd", contact="John Doe",
+            lead_type="direct_eor", outreach_status="drafted", priority="high",
+        ),
+        _pipeline_record_dict(
+            company="Beta Co", contact="Jane Smith",
+            lead_type="direct_payroll", outreach_status="sent", priority="medium",
+        ),
+    ]
+    app = OperatorConsoleApp(service=_PipelineFakeService(records))
+    status, body, _headers = _run_app(
+        app,
+        {
+            "REQUEST_METHOD": "GET",
+            "PATH_INFO": "/pipeline",
+            "QUERY_STRING": "",
+            "wsgi.input": BytesIO(b""),
+        },
+    )
+
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    assert ">Pipeline<" in html  # nav link or section header
+    assert "Acme Ltd" in html
+    assert "Beta Co" in html
+    assert "John Doe" in html
+    assert "Open in Notion" in html
+
+
+def test_pipeline_page_filters_by_outreach_status() -> None:
+    records = [
+        _pipeline_record_dict(
+            company="Drafted Co", contact="A",
+            lead_type="direct_eor", outreach_status="drafted",
+        ),
+        _pipeline_record_dict(
+            company="Sent Co", contact="B",
+            lead_type="direct_eor", outreach_status="sent",
+        ),
+    ]
+    app = OperatorConsoleApp(service=_PipelineFakeService(records))
+    status, body, _headers = _run_app(
+        app,
+        {
+            "REQUEST_METHOD": "GET",
+            "PATH_INFO": "/pipeline",
+            "QUERY_STRING": "status=sent",
+            "wsgi.input": BytesIO(b""),
+        },
+    )
+
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    assert "Sent Co" in html
+    assert "Drafted Co" not in html
+
+
+def test_pipeline_page_sorts_by_priority_high_first() -> None:
+    records = [
+        _pipeline_record_dict(
+            company="Low Priority Co", contact="A",
+            lead_type="direct_eor", outreach_status="drafted", priority="low",
+        ),
+        _pipeline_record_dict(
+            company="High Priority Co", contact="B",
+            lead_type="direct_eor", outreach_status="drafted", priority="high",
+        ),
+        _pipeline_record_dict(
+            company="Medium Priority Co", contact="C",
+            lead_type="direct_eor", outreach_status="drafted", priority="medium",
+        ),
+    ]
+    app = OperatorConsoleApp(service=_PipelineFakeService(records))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/pipeline",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    high_idx = html.find("High Priority Co")
+    medium_idx = html.find("Medium Priority Co")
+    low_idx = html.find("Low Priority Co")
+    assert 0 < high_idx < medium_idx < low_idx
+
+
+def test_pipeline_page_empty_state_when_no_records() -> None:
+    app = OperatorConsoleApp(service=_PipelineFakeService([]))
+    status, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/pipeline",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    assert status == "200 OK"
+    assert "No pipeline records yet." in body.decode("utf-8")
