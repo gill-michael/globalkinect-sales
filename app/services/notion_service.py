@@ -433,6 +433,53 @@ class NotionService:
                 records.append(record)
         return records
 
+    def list_pipeline_records(self, limit: int = 200) -> list[dict[str, Any]]:
+        """Return Pipeline rows as plain dicts shaped for audit/console use.
+
+        Not every `PipelineRecord` model field is written to Notion (the
+        timestamps live in Supabase only), so this method intentionally
+        returns dicts with the subset the Notion DB actually carries plus
+        the page's `last_edited_time` as a "last touched" signal.
+
+        `lead_type` is parsed from the lead_reference title suffix
+        (`Company|Contact|Country|lead_type`).
+        """
+        self._ensure_configured()
+        payload = self._query_database(
+            self.database_ids[self.DATABASE_PIPELINE],
+            limit=limit,
+            sort_direction="descending",
+        )
+        records: list[dict[str, Any]] = []
+        for page in payload.get("results", []):
+            lead_reference = self._property_text(page, "Lead Reference")
+            if not lead_reference:
+                continue
+            lead_type: str | None = None
+            parts = lead_reference.split("|")
+            if len(parts) >= 4:
+                lead_type = parts[-1].strip() or None
+            records.append({
+                "page_id": page["id"],
+                "page_url": f"https://notion.so/{page['id'].replace('-', '')}",
+                "last_edited_time": page.get("last_edited_time"),
+                "lead_reference": lead_reference,
+                "lead_type": lead_type,
+                "company_name": self._property_text(page, "Company"),
+                "contact_name": (
+                    parts[1].strip() if len(parts) >= 2 else None
+                ),
+                "stage": self._property_option(page, "Stage"),
+                "outreach_status": self._property_option(page, "Outreach Status"),
+                "next_action": self._property_text(page, "Next Action"),
+                "priority": self._property_option(page, "Priority"),
+                "sales_motion": self._property_option(page, "Sales Motion"),
+                "primary_module": self._property_option(page, "Primary Module"),
+                "bundle_label": self._property_option(page, "Bundle Label"),
+                "last_updated": self._property_date(page, "Last Updated"),
+            })
+        return records
+
     def list_outreach_queue_records(
         self,
         limit: int = 100,
