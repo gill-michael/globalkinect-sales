@@ -1,8 +1,14 @@
-# GlobalKinect Sales Engine
+# Global Kinect Sales Engine
+
+> **Start here:** [`docs/SYSTEM.md`](docs/SYSTEM.md) is the single source of
+> truth — it describes what's actually built, every subsystem, all 18
+> agents, the Notion data model, and the lead lifecycle end to end. The
+> sections below are kept as the historical project description; where
+> they disagree with `SYSTEM.md`, `SYSTEM.md` wins.
 
 ## Overview
 
-GlobalKinect Sales Engine is an internal commercial workflow engine for identifying, qualifying, shaping, and progressing revenue opportunities for one modular employment infrastructure platform. The primary commercial focus is the UAE, Saudi Arabia, and Egypt, while the wider supported payroll and employment footprint also includes the other Gulf states plus Lebanon and Jordan. HRIS-led opportunities can also be qualified outside those focus markets when the source evidence is strong.
+Global Kinect Sales Engine is an internal commercial workflow engine for identifying, qualifying, shaping, and progressing revenue opportunities for one modular employment infrastructure platform. The primary commercial focus is the UAE, Saudi Arabia, and Egypt, while the wider supported payroll and employment footprint also includes the other Gulf states plus Lebanon and Jordan. HRIS-led opportunities can also be qualified outside those focus markets when the source evidence is strong.
 
 The platform can be sold as:
 
