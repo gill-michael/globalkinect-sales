@@ -55,6 +55,11 @@ class OperatorConsoleApp:
                     start_response,
                     self._render_pipeline(query),
                 )
+            if method == "GET" and path == "/tasks":
+                return self._respond_html(
+                    start_response,
+                    self._render_tasks(query),
+                )
             if method == "POST" and path == "/queue/status":
                 return self._handle_queue_status(start_response, environ)
             if method == "GET" and path == "/runs":
@@ -421,6 +426,69 @@ class OperatorConsoleApp:
             f"<div class='stack'>{rows}</div></section>"
         )
         return self._layout("Pipeline", "pipeline", body)
+
+    def _render_tasks(self, query: dict[str, list[str]]) -> str:
+        """Three sequential sections — Pending (open), Done (completed),
+        Cancelled — each sorted by due_in_days ascending. The model's
+        ExecutionTaskStatus literal is `{open, completed, cancelled}`;
+        the spec's "pending / in_progress / done" labels map onto open
+        and completed (no in_progress state exists in the model)."""
+        records = self.service.list_execution_tasks(limit=300)
+        requested_search = self._selected_filter(query, "q")
+        filtered = self._apply_dict_filters(
+            records,
+            status_field="status",
+            selected_status=None,  # status filter handled by section grouping
+            search_text=requested_search,
+            search_fields=(
+                "task_title", "company_name", "lead_reference",
+                "task_type", "description", "priority",
+            ),
+        )
+
+        # Group by status — `open` first (most actionable), then completed,
+        # then cancelled. Anything else goes to a fourth bucket.
+        groups: dict[str, list[dict]] = {
+            "open": [], "completed": [], "cancelled": [], "other": [],
+        }
+        for record in filtered:
+            normalized = self._normalize(record.get("status"))
+            bucket = normalized if normalized in groups else "other"
+            groups[bucket].append(record)
+        for bucket in groups:
+            groups[bucket].sort(
+                key=lambda r: (
+                    r.get("due_in_days") if r.get("due_in_days") is not None else 9999,
+                    -self._priority_rank_inverse(r.get("priority")),
+                    (r.get("company_name") or "").lower(),
+                )
+            )
+
+        sections_html = "".join(
+            self._tasks_section(label, groups[bucket])
+            for label, bucket in [
+                ("Pending", "open"),
+                ("Done", "completed"),
+                ("Cancelled", "cancelled"),
+            ]
+        )
+        if groups["other"]:
+            sections_html += self._tasks_section("Other", groups["other"])
+
+        body = (
+            self._warning_banner()
+            + self._flash_banner(self._flash_message(query))
+            + self._page_header(
+                "Tasks",
+                "Operator action items derived from pipeline state. Sourced "
+                "from the Notion Execution Tasks DB.",
+                len(filtered),
+                len(records),
+            )
+            + self._tasks_search_toolbar("/tasks", requested_search)
+            + sections_html
+        )
+        return self._layout("Tasks", "tasks", body)
 
     def _render_runs(self, query: dict[str, list[str]]) -> str:
         records = self.service.list_sales_engine_runs(limit=50)
@@ -1194,6 +1262,83 @@ class OperatorConsoleApp:
             f"<div class='actions'>{actions}</div>"
             "</article>"
         )
+
+    def _tasks_section(self, heading: str, records: list[dict]) -> str:
+        if not records:
+            empty_msg = {
+                "Pending": "No pending tasks — operator queue is clear.",
+                "Done": "No completed tasks recorded yet.",
+                "Cancelled": "No cancelled tasks.",
+                "Other": "No tasks in unexpected states.",
+            }.get(heading, "No tasks in this group.")
+            body = f"<p class='muted'>{escape(empty_msg)}</p>"
+        else:
+            body = (
+                "<div class='stack'>"
+                + "".join(self._task_card(record) for record in records)
+                + "</div>"
+            )
+        return (
+            "<section class='panel'><div class='panel-head'>"
+            f"<h2>{escape(heading)}</h2>"
+            f"<span class='muted'>{len(records)} item{'s' if len(records) != 1 else ''}</span>"
+            "</div>"
+            f"{body}</section>"
+        )
+
+    def _task_card(self, record: dict) -> str:
+        title = record.get("task_title") or record.get("task_type") or "Task"
+        company = record.get("company_name") or "Unknown company"
+        page_url = record.get("page_url") or "#"
+        due = record.get("due_in_days")
+        if due is None:
+            due_label = "Due: unspecified"
+        elif due == 0:
+            due_label = "Due today"
+        elif due < 0:
+            due_label = f"Overdue by {abs(due)}d"
+        else:
+            due_label = f"Due in {due}d"
+        notion_link = (
+            f"<div class='actions'><a class='nav-link' href='{escape(page_url, quote=True)}' "
+            "target='_blank' rel='noreferrer'>Open in Notion</a></div>"
+        ) if page_url and page_url != "#" else ""
+        return (
+            "<article class='row-card'>"
+            "<div class='row-top'>"
+            f"<div class='row-title'><h3>{escape(title)}</h3>"
+            f"<p class='muted'>{escape(company)}</p></div>"
+            f"{self._status_badge(record.get('status'))}"
+            "</div>"
+            f"{self._meta_badges([record.get('priority'), record.get('task_type'), due_label])}"
+            f"{self._pair_grid([('Lead Reference', record.get('lead_reference')), ('Description', record.get('description'))])}"
+            f"{notion_link}"
+            "</article>"
+        )
+
+    def _tasks_search_toolbar(
+        self,
+        path: str,
+        search_text: str | None,
+    ) -> str:
+        search_value = escape(search_text or "", quote=True)
+        return (
+            "<section class='toolbar'>"
+            "<div class='toolbar-row'>"
+            "<form class='toolbar-form' method='get'>"
+            f"<input type='search' name='q' placeholder='Search task title, company, lead, or description' value='{search_value}'>"
+            "<button class='btn btn-primary' type='submit'>Apply</button>"
+            f"<a class='chip' href='{escape(path, quote=True)}'>Reset</a>"
+            "</form>"
+            "</div>"
+            "</section>"
+        )
+
+    def _priority_rank_inverse(self, priority: str | None) -> int:
+        """Higher number = higher priority. Used for in-group sort tiebreaker
+        when ascending due_in_days produces ties."""
+        ordered = {"high": 3, "medium": 2, "low": 1}
+        return ordered.get(self._normalize(priority), 0)
 
     def _pipeline_card(self, record: dict) -> str:
         company = record.get("company_name") or record.get("lead_reference") or "Unknown"

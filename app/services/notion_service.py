@@ -433,6 +433,34 @@ class NotionService:
                 records.append(record)
         return records
 
+    def list_execution_tasks(self, limit: int = 200) -> list[dict[str, Any]]:
+        """Return Execution Tasks rows as plain dicts shaped for the
+        operator console's Tasks view. Status is one of `open`,
+        `completed`, `cancelled`; due_in_days is a number; the title
+        property is `Task` (built from task_type + lead_reference)."""
+        self._ensure_configured()
+        payload = self._query_database(
+            self.database_ids[self.DATABASE_TASKS],
+            limit=limit,
+            sort_direction="descending",
+        )
+        records: list[dict[str, Any]] = []
+        for page in payload.get("results", []):
+            records.append({
+                "page_id": page["id"],
+                "page_url": f"https://notion.so/{page['id'].replace('-', '')}",
+                "last_edited_time": page.get("last_edited_time"),
+                "task_title": self._property_text(page, "Task"),
+                "lead_reference": self._property_text(page, "Lead Reference"),
+                "company_name": self._property_text(page, "Company"),
+                "task_type": self._property_option(page, "Task Type"),
+                "description": self._property_text(page, "Description"),
+                "priority": self._property_option(page, "Priority"),
+                "due_in_days": self._property_number(page, "Due In Days"),
+                "status": self._property_option(page, "Status"),
+            })
+        return records
+
     def list_pipeline_records(self, limit: int = 200) -> list[dict[str, Any]]:
         """Return Pipeline rows as plain dicts shaped for audit/console use.
 

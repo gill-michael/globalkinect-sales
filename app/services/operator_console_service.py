@@ -44,6 +44,11 @@ class OperatorConsoleService:
             return []
         return self.notion_service.list_pipeline_records(limit=limit)
 
+    def list_execution_tasks(self, limit: int = 200):
+        if not self.notion_service.is_configured():
+            return []
+        return self.notion_service.list_execution_tasks(limit=limit)
+
     def update_outreach_queue_status(
         self,
         lead_reference: str,

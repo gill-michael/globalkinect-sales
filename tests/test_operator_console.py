@@ -73,6 +73,9 @@ class FakeOperatorConsoleService:
         # Default fixture returns nothing; subclasses override per test.
         return []
 
+    def list_execution_tasks(self, limit: int = 200) -> list[dict]:
+        return []
+
     def update_outreach_queue_status(self, lead_reference: str, status: str) -> None:
         self.updated.append((lead_reference, status))
 
@@ -354,3 +357,113 @@ def test_pipeline_page_empty_state_when_no_records() -> None:
     )
     assert status == "200 OK"
     assert "No pipeline records yet." in body.decode("utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Tasks view (Task 3b)
+# ---------------------------------------------------------------------------
+
+def _task_dict(
+    *,
+    title: str,
+    company: str,
+    status: str,
+    due_in_days: int | None,
+    priority: str = "medium",
+    task_type: str = "send_message",
+) -> dict:
+    pid = f"task-{title.lower().replace(' ', '-')}"
+    return {
+        "page_id": pid,
+        "page_url": f"https://notion.so/{pid.replace('-', '')}",
+        "last_edited_time": "2026-04-15T09:00:00Z",
+        "task_title": title,
+        "lead_reference": f"{company}|Sara|UAE|direct_eor",
+        "company_name": company,
+        "task_type": task_type,
+        "description": f"Process the {task_type} for {company}",
+        "priority": priority,
+        "due_in_days": due_in_days,
+        "status": status,
+    }
+
+
+class _TasksFakeService(FakeOperatorConsoleService):
+    def __init__(self, records: list[dict]) -> None:
+        super().__init__()
+        self._records = records
+
+    def list_execution_tasks(self, limit: int = 200) -> list[dict]:
+        return list(self._records[:limit])
+
+
+def test_tasks_page_groups_by_status_with_three_sections() -> None:
+    records = [
+        _task_dict(title="Send pending one", company="Acme", status="open", due_in_days=0),
+        _task_dict(title="Done one", company="Beta", status="completed", due_in_days=3),
+        _task_dict(title="Cancelled one", company="Gamma", status="cancelled", due_in_days=5),
+    ]
+    app = OperatorConsoleApp(service=_TasksFakeService(records))
+    status, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/tasks",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    # Three section headings present
+    assert ">Pending<" in html
+    assert ">Done<" in html
+    assert ">Cancelled<" in html
+    # Each task lands in its section
+    assert "Send pending one" in html
+    assert "Done one" in html
+    assert "Cancelled one" in html
+
+
+def test_tasks_page_sorts_within_pending_by_due_in_days_asc() -> None:
+    records = [
+        _task_dict(title="Due in 5", company="Five", status="open", due_in_days=5),
+        _task_dict(title="Due today", company="Today", status="open", due_in_days=0),
+        _task_dict(title="Overdue", company="Overdue", status="open", due_in_days=-2),
+    ]
+    app = OperatorConsoleApp(service=_TasksFakeService(records))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/tasks",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    # Pending section orders most-overdue first (smallest due_in_days)
+    overdue_idx = html.find("Overdue")
+    today_idx = html.find("Due today")
+    five_idx = html.find("Due in 5")
+    assert 0 < overdue_idx < today_idx < five_idx
+
+
+def test_tasks_page_search_filters_across_groups() -> None:
+    records = [
+        _task_dict(title="Process Acme", company="Acme Ltd", status="open", due_in_days=1),
+        _task_dict(title="Process Beta", company="Beta Co", status="completed", due_in_days=2),
+    ]
+    app = OperatorConsoleApp(service=_TasksFakeService(records))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/tasks",
+         "QUERY_STRING": "q=Beta", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    assert "Process Beta" in html
+    assert "Process Acme" not in html
+
+
+def test_tasks_page_empty_state_when_no_records() -> None:
+    app = OperatorConsoleApp(service=_TasksFakeService([]))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/tasks",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    assert "No pending tasks" in html
+    assert "No completed tasks" in html
