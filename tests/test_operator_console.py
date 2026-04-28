@@ -76,6 +76,9 @@ class FakeOperatorConsoleService:
     def list_execution_tasks(self, limit: int = 200) -> list[dict]:
         return []
 
+    def list_deal_support_packages(self, limit: int = 200) -> list[dict]:
+        return []
+
     def update_outreach_queue_status(self, lead_reference: str, status: str) -> None:
         self.updated.append((lead_reference, status))
 
@@ -467,3 +470,118 @@ def test_tasks_page_empty_state_when_no_records() -> None:
     html = body.decode("utf-8")
     assert "No pending tasks" in html
     assert "No completed tasks" in html
+
+
+# ---------------------------------------------------------------------------
+# Deal Support view (Task 3c)
+# ---------------------------------------------------------------------------
+
+def _deal_support_dict(
+    *,
+    company: str,
+    contact: str,
+    lead_type: str,
+    stage: str = "proposal",
+    proposal_summary: str = "Proposed model: ...",
+) -> dict:
+    lead_reference = f"{company}|{contact}|United Arab Emirates|{lead_type}"
+    pid = f"deal-{company.lower().replace(' ', '-')}"
+    return {
+        "page_id": pid,
+        "page_url": f"https://notion.so/{pid.replace('-', '')}",
+        "last_edited_time": "2026-04-15T09:00:00Z",
+        "lead_reference": lead_reference,
+        "lead_type": lead_type,
+        "company_name": company,
+        "contact_name": contact,
+        "stage": stage,
+        "recap_subject": f"Recap: {company} call",
+        "proposal_summary": proposal_summary,
+        "next_steps": f"Send {company} a one-pager.",
+        "objection_response": f"If price is the concern: {company} ROI breakdown.",
+    }
+
+
+class _DealSupportFakeService(FakeOperatorConsoleService):
+    def __init__(self, records: list[dict]) -> None:
+        super().__init__()
+        self._records = records
+
+    def list_deal_support_packages(self, limit: int = 200) -> list[dict]:
+        return list(self._records[:limit])
+
+
+def test_deal_support_page_renders_packages() -> None:
+    records = [
+        _deal_support_dict(
+            company="Acme Ltd", contact="John Doe",
+            lead_type="direct_eor", proposal_summary="Acme proposal narrative.",
+        ),
+        _deal_support_dict(
+            company="Beta Co", contact="Jane Smith",
+            lead_type="direct_payroll", proposal_summary="Beta proposal narrative.",
+        ),
+    ]
+    app = OperatorConsoleApp(service=_DealSupportFakeService(records))
+    status, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/deal-support",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    assert status == "200 OK"
+    html = body.decode("utf-8")
+    assert "Acme Ltd" in html
+    assert "Beta Co" in html
+    assert "Acme proposal narrative." in html
+    assert "Beta proposal narrative." in html
+    assert "Open in Notion" in html
+
+
+def test_deal_support_page_filters_by_motion() -> None:
+    records = [
+        _deal_support_dict(
+            company="EOR Co", contact="A", lead_type="direct_eor"
+        ),
+        _deal_support_dict(
+            company="Payroll Co", contact="B", lead_type="direct_payroll"
+        ),
+    ]
+    app = OperatorConsoleApp(service=_DealSupportFakeService(records))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/deal-support",
+         "QUERY_STRING": "motion=direct_eor", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    assert "EOR Co" in html
+    assert "Payroll Co" not in html
+
+
+def test_deal_support_page_truncates_long_proposal_summary() -> None:
+    long_proposal = "Long narrative. " * 30
+    records = [
+        _deal_support_dict(
+            company="Acme", contact="X", lead_type="direct_eor",
+            proposal_summary=long_proposal,
+        ),
+    ]
+    app = OperatorConsoleApp(service=_DealSupportFakeService(records))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/deal-support",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    # Long narrative should have been truncated with an ellipsis
+    assert "…" in html
+
+
+def test_deal_support_page_empty_state_when_no_records() -> None:
+    app = OperatorConsoleApp(service=_DealSupportFakeService([]))
+    _, body, _ = _run_app(
+        app,
+        {"REQUEST_METHOD": "GET", "PATH_INFO": "/deal-support",
+         "QUERY_STRING": "", "wsgi.input": BytesIO(b"")},
+    )
+    html = body.decode("utf-8")
+    assert "No deal support packages yet." in html

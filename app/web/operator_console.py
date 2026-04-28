@@ -60,6 +60,11 @@ class OperatorConsoleApp:
                     start_response,
                     self._render_tasks(query),
                 )
+            if method == "GET" and path == "/deal-support":
+                return self._respond_html(
+                    start_response,
+                    self._render_deal_support(query),
+                )
             if method == "POST" and path == "/queue/status":
                 return self._handle_queue_status(start_response, environ)
             if method == "GET" and path == "/runs":
@@ -489,6 +494,60 @@ class OperatorConsoleApp:
             + sections_html
         )
         return self._layout("Tasks", "tasks", body)
+
+    def _render_deal_support(self, query: dict[str, list[str]]) -> str:
+        """Deal Support package list, filterable by lead_type (the spec
+        calls this `sales motion` but the writer at
+        `_build_deal_support_properties` doesn't persist sales_motion to
+        Notion; lead_type is encoded in the lead_reference suffix and is
+        the available filter dimension)."""
+        records = self.service.list_deal_support_packages(limit=200)
+        requested_motion = self._selected_filter(query, "motion")
+        requested_search = self._selected_filter(query, "q")
+        filtered = self._apply_dict_filters(
+            records,
+            status_field="lead_type",
+            selected_status=requested_motion,
+            search_text=requested_search,
+            search_fields=(
+                "company_name", "contact_name", "lead_reference",
+                "stage", "recap_subject", "proposal_summary",
+            ),
+        )
+        ordered = sorted(
+            filtered,
+            key=lambda record: (
+                (record.get("company_name") or record.get("lead_reference") or "").lower(),
+            ),
+        )
+        rows = "".join(self._deal_support_card(record) for record in ordered) or (
+            "<p class='muted'>No deal support packages yet.</p>"
+        )
+        motion_counts = self._summarize_dict_statuses(records, "lead_type")
+        body = (
+            self._warning_banner()
+            + self._flash_banner(self._flash_message(query))
+            + self._page_header(
+                "Deal Support",
+                "Call prep, recap subjects, proposal summaries, next steps, "
+                "and objection responses generated per lead.",
+                len(filtered),
+                len(records),
+            )
+            + self._filter_toolbar(
+                "/deal-support",
+                requested_motion,
+                requested_search,
+                motion_counts,
+                "Search company, lead reference, recap subject, or proposal text",
+                status_param="motion",
+            )
+            + "<section class='panel'><div class='panel-head'><h2>Deal Support</h2>"
+            "<span class='muted'>Use as call-prep alongside the Pipeline view. "
+            "Click into Notion for the full proposal.</span></div>"
+            f"<div class='stack'>{rows}</div></section>"
+        )
+        return self._layout("Deal Support", "deal-support", body)
 
     def _render_runs(self, query: dict[str, list[str]]) -> str:
         records = self.service.list_sales_engine_runs(limit=50)
@@ -1147,11 +1206,21 @@ class OperatorConsoleApp:
         search_text: str | None,
         status_counts: list[tuple[str, int]],
         search_placeholder: str,
+        status_param: str = "status",
     ) -> str:
+        """`status_param` lets non-status filters (e.g., 'motion' on the
+        Deal Support view) reuse this toolbar without breaking the chip
+        URLs for views that filter by status."""
         normalized_selected = self._normalize(selected_status)
         search_value = escape(search_text or "", quote=True)
+        all_label = "All" if status_param != "status" else "All statuses"
         chips = [
-            self._filter_chip(path, None, search_text, "All statuses", sum(count for _, count in status_counts), not normalized_selected)
+            self._filter_chip(
+                path, None, search_text, all_label,
+                sum(count for _, count in status_counts),
+                not normalized_selected,
+                status_param=status_param,
+            )
         ]
         chips.extend(
             self._filter_chip(
@@ -1161,6 +1230,7 @@ class OperatorConsoleApp:
                 status,
                 count,
                 self._normalize(status) == normalized_selected,
+                status_param=status_param,
             )
             for status, count in status_counts
         )
@@ -1191,10 +1261,11 @@ class OperatorConsoleApp:
         label: str,
         count: int,
         active: bool,
+        status_param: str = "status",
     ) -> str:
         params: dict[str, str] = {}
         if status:
-            params["status"] = status
+            params[status_param] = status
         if search_text:
             params["q"] = search_text
         href = path if not params else f"{path}?{urlencode(params)}"
@@ -1260,6 +1331,32 @@ class OperatorConsoleApp:
             f"{self._details_block('Follow-Up Message', record.follow_up_message)}"
             f"{self._text_block('Notes', record.notes)}"
             f"<div class='actions'>{actions}</div>"
+            "</article>"
+        )
+
+    def _deal_support_card(self, record: dict) -> str:
+        company = record.get("company_name") or record.get("lead_reference") or "Unknown"
+        contact = record.get("contact_name") or "Unknown contact"
+        page_url = record.get("page_url") or "#"
+        proposal = record.get("proposal_summary") or ""
+        excerpt = proposal if len(proposal) <= 220 else proposal[:217] + "…"
+        notion_link = (
+            f"<div class='actions'><a class='nav-link' href='{escape(page_url, quote=True)}' "
+            "target='_blank' rel='noreferrer'>Open in Notion</a></div>"
+        ) if page_url and page_url != "#" else ""
+        return (
+            "<article class='row-card'>"
+            "<div class='row-top'>"
+            f"<div class='row-title'><h3>{escape(company)}</h3>"
+            f"<p class='muted'>{escape(contact)}</p></div>"
+            f"{self._status_badge(record.get('stage'))}"
+            "</div>"
+            f"{self._meta_badges([record.get('lead_type'), record.get('stage')])}"
+            f"{self._pair_grid([('Lead Reference', record.get('lead_reference')), ('Recap Subject', record.get('recap_subject'))])}"
+            f"{self._text_block('Proposal Summary', excerpt)}"
+            f"{self._details_block('Next Steps', record.get('next_steps'))}"
+            f"{self._details_block('Objection Response', record.get('objection_response'))}"
+            f"{notion_link}"
             "</article>"
         )
 

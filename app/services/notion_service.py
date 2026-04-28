@@ -433,6 +433,40 @@ class NotionService:
                 records.append(record)
         return records
 
+    def list_deal_support_packages(self, limit: int = 200) -> list[dict[str, Any]]:
+        """Return Deal Support rows as plain dicts. Notion stores a
+        slice of the DealSupportPackage model — Lead Reference, Company,
+        Stage, Recap Subject, Proposal Summary, Next Steps, Objection
+        Response. lead_type is parsed from the lead_reference suffix."""
+        self._ensure_configured()
+        payload = self._query_database(
+            self.database_ids[self.DATABASE_DEAL_SUPPORT],
+            limit=limit,
+            sort_direction="descending",
+        )
+        records: list[dict[str, Any]] = []
+        for page in payload.get("results", []):
+            lead_reference = self._property_text(page, "Lead Reference")
+            if not lead_reference:
+                continue
+            parts = lead_reference.split("|")
+            lead_type = parts[-1].strip() if len(parts) >= 4 else None
+            records.append({
+                "page_id": page["id"],
+                "page_url": f"https://notion.so/{page['id'].replace('-', '')}",
+                "last_edited_time": page.get("last_edited_time"),
+                "lead_reference": lead_reference,
+                "lead_type": lead_type,
+                "company_name": self._property_text(page, "Company"),
+                "contact_name": parts[1].strip() if len(parts) >= 2 else None,
+                "stage": self._property_option(page, "Stage"),
+                "recap_subject": self._property_text(page, "Recap Subject"),
+                "proposal_summary": self._property_text(page, "Proposal Summary"),
+                "next_steps": self._property_text(page, "Next Steps"),
+                "objection_response": self._property_text(page, "Objection Response"),
+            })
+        return records
+
     def list_execution_tasks(self, limit: int = 200) -> list[dict[str, Any]]:
         """Return Execution Tasks rows as plain dicts shaped for the
         operator console's Tasks view. Status is one of `open`,
