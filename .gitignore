@@ -61,3 +61,20 @@ graphify-out/
 # Orphans / one-off artefacts
 # =====================================================================
 .mv_test_cross
+
+# =====================================================================
+# Pre-Week-1 cleanup additions (Spec 0001a, 2026-05-03)
+# =====================================================================
+
+# Lovable dashboard nested repo — separate Cloudflare/Lovable deployment surface
+leads/leads/
+
+# Graphify side-effect output (regenerable)
+.graphify_detect.json
+
+# Snapshot zip from sales-engine v1 era (do not commit binary archives)
+sales-engine.zip
+*.zip
+
+# Operational CSVs — discoverable through Vibe Prospecting, not source code
+sales-engine/csv/*.csv

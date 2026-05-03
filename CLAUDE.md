@@ -43,3 +43,39 @@ Shadow mode is always on unless Michael explicitly disables it.
 - [ ] Generated copy reviewed against OUTREACH_VOICE.md
 - [ ] ICP scoring consistent with branding/GLOBAL_KINECT_ICP.md
 - [ ] pytest passes before any deployment
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+
+## Business knowledge vault
+
+Queryable vault at `C:\dev\globalkinect\brain\` (Obsidian).
+Claude Code MCP (default port 27124) exposes the vault — query
+it for brand rules, ICP detail, compliance facts, SOPs,
+competitor positioning, decision history, and client context.
+
+Use the vault for: business questions, historical decisions, deep
+brand rules, compliance specifics, client context.
+Use repo files for: current implementation detail and shipping code.
+
+## Restricted paths
+
+Never read, open, or list files under `C:\dev\globalkinect\keys\`.
+If a task requires a credential, stop and ask — do not attempt to
+read from `keys\`.
+
+## Error handling
+
+- **MCP failures** (Obsidian vault unreachable, graphify query
+  fails): retry once, then log and continue with what is at hand.
+  Never fabricate vault content from training data.
+- **External content** (outreach, published copy, client
+  communication): never ship if an enrichment step (ICP hook
+  lookup, compliance lookup, brand check) failed. Log and flag
+  for review instead.
