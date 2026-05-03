@@ -45,6 +45,7 @@ if str(REPO_ROOT) not in sys.path:
 from app.services.config import settings  # noqa: E402
 from app.services.notion_service import NotionService  # noqa: E402
 from app.utils.logger import get_logger  # noqa: E402
+from sales_ingestion.vibe_to_supabase import write_to_sales_supabase  # noqa: E402
 
 logger = get_logger(__name__)
 
@@ -719,6 +720,10 @@ def run_scan(args: argparse.Namespace) -> int:
     skipped_duplicate = 0
     enriched_with_email = 0
     enrichment_failures = 0
+    sales_supabase_attempted = 0
+    sales_supabase_created = 0
+    sales_supabase_skipped_duplicate = 0
+    sales_supabase_error = 0
 
     for record in results:
         normalised = normalise_result(record)
@@ -743,6 +748,26 @@ def run_scan(args: argparse.Namespace) -> int:
                 # Batch succeeded but Explorium had no email on file.
                 # Not strictly a failure — distinct from a batch error.
                 normalised["enrichment_credits"] = CREDITS_PER_PROSPECT_EMAIL_ONLY
+
+        # Additive sales-Supabase write — runs for every real prospect,
+        # independent of Notion-side dedup, so the new canonical store stays
+        # complete even when Notion already has the row. The helper catches
+        # all exceptions and returns a status dict; never propagates upward.
+        if not args.dry_run:
+            sales_supabase_attempted += 1
+            sales_result = write_to_sales_supabase(normalised)
+            sales_status = sales_result.get("status")
+            if sales_status == "created":
+                sales_supabase_created += 1
+            elif sales_status == "skipped_duplicate":
+                sales_supabase_skipped_duplicate += 1
+            else:
+                sales_supabase_error += 1
+                logger.warning(
+                    "Sales Supabase write returned error for %s: %s",
+                    normalised.get("company_name"),
+                    sales_result.get("reason"),
+                )
 
         email_key = (normalised.get("email_plain") or "").strip().lower()
         pair_key = ""
@@ -810,6 +835,13 @@ def run_scan(args: argparse.Namespace) -> int:
     print(f"  Written to Notion:       {written}{' (dry-run)' if args.dry_run else ''}")
     print(f"  Skipped (empty):         {skipped_empty}")
     print(f"  Skipped (dupe):          {skipped_duplicate}")
+    if not args.dry_run:
+        print(
+            f"  Sales Supabase: {sales_supabase_attempted} attempted, "
+            f"{sales_supabase_created} created, "
+            f"{sales_supabase_skipped_duplicate} duplicates skipped, "
+            f"{sales_supabase_error} errors"
+        )
     for key, value in meta.items():
         print(f"  {key}: {value}")
     return 0
